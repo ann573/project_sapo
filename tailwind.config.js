@@ -13,8 +13,8 @@ export default {
         'custom-gradient': 'radial-gradient(100% 1111.11% at 100% 51.11%, #00d8b0 0%, #00de92 100%)',
       },
       height: {
-        'screen-minus-50': 'calc(100vh - 49px)',
-        'pay':"75vh"
+        'screen-minus-50': 'calc(100vh - 66px)',
+        'screen-minus-pay': 'calc(100vh - 56px)',
       },
     },
   },

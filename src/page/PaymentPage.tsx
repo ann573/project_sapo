@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { IProduct } from "./../interface/IProduct";
 import { getProductById } from "../service/product";
-
+import { Link } from "react-router-dom";
 import "../style/paymentpage.css";
 
 const PaymentPage = () => {
@@ -27,17 +27,17 @@ const PaymentPage = () => {
 
         if (existingProduct) {
           setQuantities((prev) => {
-            const newQuantity = (prev[existingProduct.id] || 0) + 1; // Tăng số lượng lên 1
-            return { ...prev, [existingProduct.id]: newQuantity }; // Cập nhật lại state quantities
+            const newQuantity = (prev[existingProduct.id] || 0) + 1; 
+            return { ...prev, [existingProduct.id]: newQuantity }; 
           });
         } else {
-          setProducts((prev) => [...prev, data]); // Thêm sản phẩm mới vào list
-          setQuantities((prev) => ({ ...prev, [data.id]: 1 })); // Thêm sản phẩm mới với số lượng 1
+          setProducts((prev) => [...prev, data]);
+          setQuantities((prev) => ({ ...prev, [data.id]: 1 })); 
         }
-        setIdProduct(""); // Reset idProduct để không lặp lại
+        setIdProduct(""); 
       })();
     }
-  }, [idProduct, products]); // Cập nhật mỗi khi idProduct thay đổi
+  }, [idProduct, products]); 
 
   const handleDecrement = (productId: string) => {
     setQuantities((prev) => {
@@ -53,89 +53,131 @@ const PaymentPage = () => {
     });
   };
 
+  const handleDelete = (productId: string) => {
+    const newProductsArray = products.filter((product) => product.id !== productId);
+    setProducts(newProductsArray)
+  }
+
+  const handleCustomPayment : React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    console.log(e);
+  }
   return (
     <>
       <HeaderPayment setIdProduct={setIdProduct} />
       <section className="grid grid-cols-11">
-        <div className="col-span-8 border-r-8 border-b-[6px]  h-pay">
-          {!products.length ? (
-            <div className="flex flex-col items-center justify-center h-full text-textColor">
-              <img
-                src="https://dunlopilloshop.com/template/img/emptycart.png"
-                alt="anh"
-                className="w-1/12"
-              />
-              <p className="my-3">Đơn hàng của bạn chưa có sản phẩm nào</p>
-              <p className="border px-2 py-1 rounded-md">Thêm sản phẩm ngay</p>
-            </div>
-          ) : (
-            <div>
-              {products.map((product, index) => (
-                <div
-                  key={product.id}
-                  className="even:bg-blue-100 grid grid-cols-12 py-2 px-3 items-center border rounded-lg shadow-sm"
-                >
-                  <div className="flex justify-start item center">
-                    <p className="mr-8">{index}</p>
-                    <i className="ri-delete-bin-6-line text-xl cursor-pointer"></i>
-                  </div>
-                  <div>
-                    <img src="https://placehold.co/50" className="rounded-lg" />
-                  </div>
-                  <div className="col-span-5">
-                    <p className="text-xl font-semibold">{product.title}</p>
-                    <p>{product.sort_title}</p>
-                  </div>
-                  <div className="flex items-center">
-                    <button
-                      className="bg-gray-300 hover:bg-gray-400 text-xl font-semibold w-5 h-[25px] flex items-center justify-center rounded-l-md"
-                      onClick={() => handleDecrement(product.id)}
-                    >
-                      -
-                    </button>
-                    <input
-                      type="number"
-                      value={quantities[product.id] || 1} // Dùng số lượng từ state
-                      onChange={(e) => {
-                        const value = Math.max(1, Number(e.target.value));
-                        setQuantities((prev) => ({
-                          ...prev,
-                          [product.id]: value,
-                        }));
-                      }}
-                      className="w-9 h-[25px] text-center border border-gray-300"
-                      min="1"
-                    />
-                    <button
-                      className="bg-gray-300 hover:bg-gray-400 w-5 h-[25px] flex items-center justify-center text-xl font-semibold px-2 rounded-r-md"
-                      onClick={() => handleIncrease(product.id)}
-                    >
-                      +
-                    </button>
-                  </div>
+        <div className="col-span-8 border-r-8  h-screen-minus-pay">
+          <div className="h-[85%] border-b-[6px] ">
+            {!products.length ? (
+              <div className="flex flex-col items-center justify-center h-full text-textColor select-none">
+                <img
+                  src="https://dunlopilloshop.com/template/img/emptycart.png"
+                  alt="anh"
+                  className="w-1/12"
+                />
+                <p className="my-3">Đơn hàng của bạn chưa có sản phẩm nào</p>
+                <p className="border px-2 py-1 rounded-md">
+                  Thêm sản phẩm ngay
+                </p>
+              </div>
+            ) : (
+              <div>
+                {products.map((product, index) => (
+                  <div
+                    key={product.id}
+                    className="even:bg-blue-100 grid grid-cols-12 py-2 px-3 items-center border rounded-lg shadow-sm"
+                  >
+                    <div className="flex justify-start item center">
+                      <p className="mr-8">{index + 1}</p>
+                      <i className="ri-delete-bin-6-line text-xl cursor-pointer" onClick={() => handleDelete(product.id)}></i>
+                    </div>
+                    <div>
+                      <img
+                        src="https://placehold.co/50"
+                        className="rounded-lg"
+                      />
+                    </div>
+                    <div className="col-span-5">
+                      <p className="text-xl font-semibold">{product.title}</p>
+                      <p>{product.sort_title}</p>
+                    </div>
+                    <div className="flex items-center">
+                      <button
+                        className="bg-gray-300 hover:bg-gray-400 text-xl font-semibold w-5 h-[25px] flex items-center justify-center rounded-l-md"
+                        onClick={() => handleDecrement(product.id)}
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        value={quantities[product.id] || 1} // Dùng số lượng từ state
+                        onChange={(e) => {
+                          const value = Math.max(1, Number(e.target.value));
+                          setQuantities((prev) => ({
+                            ...prev,
+                            [product.id]: value,
+                          }));
+                        }}
+                        className="w-9 h-[25px] text-center border border-gray-300"
+                        min="1"
+                      />
+                      <button
+                        className="bg-gray-300 hover:bg-gray-400 w-5 h-[25px] flex items-center justify-center text-xl font-semibold px-2 rounded-r-md"
+                        onClick={() => handleIncrease(product.id)}
+                      >
+                        +
+                      </button>
+                    </div>
 
-                  <div className="col-start-9 flex justify-center">
-                    <p>
-                      {product.price.toLocaleString("vi", {
-                        style: "currency",
-                        currency: "VND",
-                      })}
-                    </p>
-                  </div>
-
-                  <div className=" col-span-2 flex justify-end item-center text-lg font-semibold">
-                    <p>
-                      {(product.price * (quantities[product.id] || 1)) // Dùng số lượng từ state
-                        .toLocaleString("vi", {
+                    <div className="col-start-10 flex justify-center">
+                      <p>
+                        {product.price.toLocaleString("vi", {
                           style: "currency",
                           currency: "VND",
                         })}
-                    </p>
+                      </p>
+                    </div>
+
+                    <div className=" col-span-2 flex justify-end item-center text-lg font-semibold">
+                      <p>
+                        {(product.price * (quantities[product.id] || 1)) 
+                          .toLocaleString("vi", {
+                            style: "currency",
+                            currency: "VND",
+                          })}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="grid grid-cols-4 h-[15%] px-3 py-5 gap-10">
+            <Link
+              className="bg-[#e3eefc] rounded-xl text-xl font-medium flex items-center justify-center"
+              to="/admin"
+            >
+              Trang quản trị
+            </Link>
+            <Link
+              className="bg-[#e3eefc] rounded-xl text-xl font-medium flex items-center justify-center"
+              to="/admin/product"
+            >
+              Quản lý sản phẩm
+            </Link>
+            <Link
+              className="bg-[#e3eefc] rounded-xl text-xl font-medium flex items-center justify-center"
+              to="/admin/order"
+            >
+              Quản lý đơn hàng
+            </Link>
+            <Link
+              className="bg-[#e3eefc] rounded-xl text-xl font-medium flex items-center justify-center"
+              to="/admin/customer"
+            >
+              Quản lý khách hàng
+            </Link>
+
+          </div>
         </div>
 
         {/* ==================== */}
@@ -185,9 +227,10 @@ const PaymentPage = () => {
             <div className="flex justify-between my-4 pb-2 relative after:content-[''] after:w-1/2 after:h-[1px] after:bg-gray-300 after:absolute after:right-0 after:top-full">
               <p>Tiền khách đưa</p>
               <input
-                type="text"
+                type="number"
                 placeholder="0"
                 className="placeholder:text-black placeholder:text-right text-right focus:outline-none"
+                onChange={(e) => handleCustomPayment(e)}
               />
             </div>
             <div className="flex justify-between">
