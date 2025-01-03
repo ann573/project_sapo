@@ -1,0 +1,52 @@
+{
+  "users": [
+    {
+      "email": "ann@imail.edu.vn",
+      "password": "$2a$10$.q/O5tKWT8.Cb1WHDitEM.MpeAwjc/nO2zdus6fDESzQioIcJeN92",
+      "confirmPassword": "123123!",
+      "id": 1
+    },
+    {
+      "email": "sdasdsa@gmail.com",
+      "password": "$2a$10$BtLEp9h4sSOTApeo0NAfM.6HwM5xJOOh8hgPgdeCzU1dewJKFraFW",
+      "confirmPassword": "123123.",
+      "id": 2
+    },
+    {
+      "email": "ngthanhan0507@gmail.com",
+      "password": "$2a$10$n0p3R5RrynnuGPB1eEPWPuc/qCur/7duSBXv2qTsegYT/IQFF211i",
+      "confirmPassword": "Ngthanhan57.",
+      "id": 3
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "title": "Sản phẩm A",
+      "price": 50000,
+      "sku": "san-pham-a",
+      "sort_title": "SPA"
+    },
+    {
+      "id": 2,
+      "title": "Sản phẩm B",
+      "price": 150000,
+      "sku": "san-pham-b",
+      "sort_title": "SPB"
+    },
+    {
+      "id": 3,
+      "title": "Sản phẩm C",
+      "price": 50000,
+      "sku": "san-pham-c",
+      "sort_title": "SPC"
+    },
+    {
+      "id": 4,
+      "title": "Sản phẩm D",
+      "price": 1250000,
+      "sku": "san-pham-d",
+      "sort_title": "SPD"
+    }
+  ]
+}
