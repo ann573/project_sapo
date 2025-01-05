@@ -7,8 +7,8 @@ const LayoutAdmin = () => {
   return (
     <>
       <HeaderAdmin title={title} />
-      <section className="grid grid-cols-12 gap-5 ">
-        <div className="col-span-2 h-screen-minus-50 bg-[#1a2c3f]">
+      <section className="grid grid-cols-12">
+        <div className="col-span-2 h-full bg-[#1a2c3f]" style={{ minHeight: 'calc(100vh - 66px)' }}>
           <nav className="text-white w-full">
             <ul>
               <li>
@@ -57,7 +57,9 @@ const LayoutAdmin = () => {
             </ul>
           </nav>
         </div>
+        <div className="col-span-10 bg-[#f4f6f8] py-5 px-32 h-full">
         <Outlet />
+        </div>
       </section>
     </>
   );
