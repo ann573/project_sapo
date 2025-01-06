@@ -19,6 +19,16 @@ export const fetchProducts = createAsyncThunk(
   }
 );
 
+export const searchProducts = createAsyncThunk(
+  "products/searchProducts",
+  async ({field, searchQuery }: {field:string, searchQuery: string }) => {
+    const response = await instance.get(
+      `products?&${field}_like=${searchQuery}`
+    );
+    return response.data;
+  }
+);
+
 export const createProduct = createAsyncThunk(
   "products/createProduct",
   async (product: IProductBefore) => {
@@ -47,3 +57,5 @@ export const fetchProductById = createAsyncThunk(
     return await getProductById(id);
   }
 );
+
+

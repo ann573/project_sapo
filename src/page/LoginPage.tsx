@@ -7,9 +7,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginAccount } from "./../service/user";
 import Cookies from "js-cookie";
-import { GoogleLogin } from "@react-oauth/google";
+import { GoogleLogin,CredentialResponse  } from "@react-oauth/google";
 
-// Thông tin đầu vào của form
 type Inputs = {
   email: string;
   password: string;
@@ -26,7 +25,7 @@ const LoginPage = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const handleGoogleLoginSuccess = (credentialResponse: any) => {
+  const handleGoogleLoginSuccess = (credentialResponse: CredentialResponse ) => {
     const googleToken = credentialResponse.credential;
     if (googleToken) {
       fetch(

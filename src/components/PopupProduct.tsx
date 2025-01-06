@@ -1,13 +1,17 @@
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { productSchema } from "../schema/product";
 import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
 import { AppDispatch, RootState } from "../../store/store";
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-import { createProduct, fetchProductById, updateNewProduct } from './../features/products/productsAction';
-import { ToastContainer,toast } from 'react-toastify';
-import { IProductBefore } from './../interface/IProduct';
+import { productSchema } from "../schema/product";
+import {
+  createProduct,
+  fetchProductById,
+  searchProducts,
+  updateNewProduct,
+} from "./../features/products/productsAction";
+import { IProductBefore } from "./../interface/IProduct";
 
 interface PopupCustomerProps {
   setIsOpen: (value: boolean) => void;
@@ -15,16 +19,17 @@ interface PopupCustomerProps {
   setId: (value: string) => void;
 }
 
-
 const PopupProduct: React.FC<PopupCustomerProps> = ({
   setIsOpen,
   id,
   setId,
 }) => {
-    const { product,error } = useSelector((state: RootState) => state.products);
+  const { product, error } = useSelector(
+    (state: RootState) => state.products
+  );
 
-    const dispatch = useDispatch<AppDispatch>();
-  
+  const dispatch = useDispatch<AppDispatch>();
+
   const {
     register,
     handleSubmit,
@@ -36,28 +41,46 @@ const PopupProduct: React.FC<PopupCustomerProps> = ({
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchProductById(id)); 
+      dispatch(fetchProductById(id));
     }
   }, [id, dispatch]);
-  
+
   useEffect(() => {
-    if (product) {
+    if (id && product) {
       reset(product);
     }
-  }, [product, reset]);
-  
+  }, [id, product]);
 
+  function removeVietnameseDiacritics(str: string): string {
+    return str
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/đ/g, "d")
+      .replace(/Đ/g, "D")
+      .replace(/[^a-zA-Z0-9 ]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
 
-  const submitForm = (value: IProductBefore) => {
-    value["sku"] = value.title.toLowerCase().replace(/ /g, "-");
+  const submitForm = async (value: IProductBefore) => {
+    value["sku"] = removeVietnameseDiacritics(value.title)
+      .toLowerCase()
+      .replace(/\s+/g, "-");
     value["sort_title"] = value["sort_title"].toUpperCase();
-  
+
+    const {payload} = await dispatch(
+      searchProducts({ field: "sku", searchQuery: value["sku"] })
+    );
+
+    if (payload.length !== 0) {
+      toast.error("Mã SKU đã tồn tại");
+      return;
+    }
     if (!id) {
       dispatch(createProduct(value));
       if (error) {
         toast.error("Có lỗi vui lòng thử lại sau");
       } else {
-        console.log("first")
         toast.success("Thêm sản phẩm thành công");
       }
     } else {
@@ -71,7 +94,7 @@ const PopupProduct: React.FC<PopupCustomerProps> = ({
     setIsOpen(false);
     reset();
   };
-  
+
   return (
     <>
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -151,7 +174,7 @@ const PopupProduct: React.FC<PopupCustomerProps> = ({
           </form>
         </div>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </>
   );
 };

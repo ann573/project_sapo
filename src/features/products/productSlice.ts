@@ -1,16 +1,18 @@
 import { createSlice, PayloadAction, SerializedError } from "@reduxjs/toolkit";
-import {
-  removeOneProduct,
-  fetchProducts,
-  updateNewProduct,
-  fetchProductById,
-  createProduct,
-} from "./productsAction";
 import { IProduct } from "./../../interface/IProduct";
+import {
+  createProduct,
+  fetchProductById,
+  fetchProducts,
+  removeOneProduct,
+  searchProducts,
+  updateNewProduct
+} from "./productsAction";
 
 interface ProductState {
   products: IProduct[];
   product: IProduct | null;
+  productSearch: IProduct[];
   loading: boolean;
   error: string | null;
 }
@@ -18,6 +20,7 @@ interface ProductState {
 const initialState: ProductState = {
   products: [],
   product: null,
+  productSearch:[],
   loading: false,
   error: null,
 };
@@ -51,6 +54,12 @@ const productSlice = createSlice({
         }
       )
       .addCase(fetchProducts.rejected, setError)
+
+      .addCase(searchProducts.fulfilled,(state: ProductState, action: PayloadAction<IProduct[]>) => {
+        state.loading = false;
+        state.productSearch = action.payload;
+      })
+      .addCase(searchProducts.rejected, setError)
 
       .addCase(
         removeOneProduct.fulfilled,

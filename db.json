@@ -38,7 +38,7 @@
       "id": 4,
       "title": "Sản phẩm D",
       "price": 1250000,
-      "sku": "sản-phẩm-d",
+      "sku": "san-pham-d",
       "sort_title": "SPD",
       "storage": 213
     },
@@ -70,7 +70,7 @@
       "id": 8,
       "title": "Sản phẩm H",
       "price": 250000,
-      "sku": "san-pham-h",
+      "sku": "sản-phẩm-h",
       "sort_title": "SPH",
       "storage": 450
     },
