@@ -25,6 +25,7 @@ const PaymentPage = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
   const [customPayment, setCustomPayment] = useState<string>("");
+
   const [percentage, setPercentage] = useState<number>(0);
   const [mustPay, setMustPay] = useState<number>(0);
   const [isSearch, setIsSearch] = useState<boolean>(false);
@@ -60,7 +61,7 @@ const PaymentPage = () => {
       percentage > 0
         ? getTotal(products) * (1 - percentage / 100)
         : getTotal(products);
-    setMustPay(pay);
+    setMustPay(Number(pay.toFixed(0)));
   }, [percentage, products, quantities]);
 
   const handleDecrement = (productId: string) => {
@@ -189,6 +190,7 @@ const PaymentPage = () => {
   }
   return (
     <>
+    
       <HeaderPayment setIdProduct={setIdProduct} />
       <section className="grid grid-cols-11">
         <div className="col-span-8 border-r-8  h-screen-minus-pay">

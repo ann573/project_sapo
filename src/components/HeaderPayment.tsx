@@ -42,20 +42,30 @@ const HeaderPayment = ({ setIdProduct }: { setIdProduct: (id: string) => void })
   }, [debouncedSearchQuery]);
 
   const handleDelete = (page: number) => {
-    const updatedPages = pages.filter((p) => p !== page);
+    const updatedPages = pages.filter((p) => p !== page);  
     setPages(updatedPages);
-
+  
     if (nowPage === page) {
       setNowPage(updatedPages[updatedPages.length - 1] || 1);
     }
-
+  
     if (updatedPages.length === 0) {
       setPages([1]);
       setNowPage(1);
     } else if (updatedPages.length === 1) {
-      setNumberPage(1);
+      setNumberPage(updatedPages[0]);
     }
   };
+  
+  const handleAddPage = () => {
+    const maxPage = Math.max(...pages, 0);  
+    const newPage = maxPage + 1;  
+  
+    // Thêm số đơn mới vào mảng pages
+    setPages((prevPages) => [...prevPages, newPage]);
+    setNowPage(newPage); 
+    setNumberPage(newPage); 
+  };  
 
   const logoutAccount = (): void => {
     nav("/login");
@@ -117,7 +127,7 @@ const HeaderPayment = ({ setIdProduct }: { setIdProduct: (id: string) => void })
               <div
                 key={page}
                 onClick={() => setNowPage(page)}
-                className={`${nowPage === page ? "selected" : "non-selected"} min-w-[110px] px-2 h-14 flex justify-center items-center cursor-pointer whitespace-nowrap`}
+                className={`${nowPage === page ? "selected" : "non-selected"} min-w-[110px] px-2 h-14 flex justify-center items-center select-none cursor-pointer whitespace-nowrap`}
                 style={{ whiteSpace: "nowrap" }}
               >
                 <p className="mr-3">Đơn {page}</p>
@@ -135,12 +145,7 @@ const HeaderPayment = ({ setIdProduct }: { setIdProduct: (id: string) => void })
           <div className="flex items-center flex-shrink-0">
             <i
               className="ri-add-line text-white text-3xl cursor-pointer"
-              onClick={() => {
-                const newPage = numberPage + 1;
-                setNumberPage(newPage);
-                setPages((prevPages) => [...prevPages, newPage]);
-                setNowPage(newPage);
-              }}
+              onClick={handleAddPage}
             ></i>
           </div>
         </section>
