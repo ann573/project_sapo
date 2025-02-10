@@ -1,15 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../store/store";
 import { useEffect, useState } from "react";
-import { fetchProducts, removeOneProduct } from "../../features/products/productsAction";
+import {
+  fetchProducts,
+  removeOneProduct,
+} from "../../features/products/productsAction";
 import PopupProduct from "../../components/PopupProduct";
-import { toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from "react-toastify";
 import useDebounce from "../../hooks/useDebounce"; // import hook debounce của bạn
-import ButtonPage from './../../components/ButtonPage';
+import ButtonPage from "./../../components/ButtonPage";
 
-  const ProductPage = () => {
+const ProductPage = () => {
   const { products, error } = useSelector((state: RootState) => state.products);
-
   const [page, setPage] = useState<number>(1);
   const limit = 10;
 
@@ -19,13 +21,11 @@ import ButtonPage from './../../components/ButtonPage';
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const debouncedSearchQuery = useDebounce(searchQuery, 500); 
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
-
-  
 
   const handleDelete = (id: string) => {
     if (window.confirm("Bạn có muốn xóa sản phẩm không")) {
@@ -55,14 +55,17 @@ import ButtonPage from './../../components/ButtonPage';
           type="text"
           className="w-full border px-10 py-2 rounded-xl focus:outline-none"
           placeholder="Tìm kiếm sản phẩm...."
-          onChange={handleSearchChange} 
+          onChange={handleSearchChange}
         />
         <i className="ri-search-line absolute left-2 top-1/4"></i>
       </div>
 
-      <button className="mt-3 bg-green-500 text-white py-2 px-3 rounded-md font-semibold" onClick={() => {
-        setIsOpen(true);
-      }}>
+      <button
+        className="mt-3 bg-green-500 text-white py-2 px-3 rounded-md font-semibold"
+        onClick={() => {
+          setIsOpen(true);
+        }}
+      >
         Thêm sản phẩm
       </button>
 
@@ -73,7 +76,6 @@ import ButtonPage from './../../components/ButtonPage';
               <th className="border border-slate-600">STT</th>
               <th className="border border-slate-600">Tên sản phẩm</th>
               <th className="border border-slate-600">Mã sản phẩm</th>
-              <th className="border border-slate-600">SKU</th>
               <th className="border border-slate-600">Tồn kho</th>
               <th className="border border-slate-600">Giá</th>
               <th className="border border-slate-600">Hoạt động</th>
@@ -82,21 +84,18 @@ import ButtonPage from './../../components/ButtonPage';
           <tbody>
             {products.map((item, index) => {
               return (
-                <tr key={item.id}>
+                <tr key={item._id}>
                   <td className="border border-slate-600 text-center">
                     {(page - 1) * limit + (index + 1)}
                   </td>
                   <td className="border border-slate-600 text-center">
-                    {item.title}
+                    {item.name}
                   </td>
                   <td className="border border-slate-600 text-center">
                     {item.sort_title}
                   </td>
                   <td className="border border-slate-600 text-center">
-                    {item.sku}
-                  </td>
-                  <td className="border border-slate-600 text-center">
-                    {item.storage}
+                    {item.quantity}
                   </td>
                   <td className="border border-slate-600 text-center">
                     {item.price.toLocaleString("vi", {
@@ -105,13 +104,19 @@ import ButtonPage from './../../components/ButtonPage';
                     })}
                   </td>
                   <td className="border border-slate-600 text-center py-2">
-                    <button className="bg-red-500 mr-3 p-1 rounded-md" onClick={() => handleDelete(item.id)}>
+                    <button
+                      className="bg-red-500 mr-3 p-1 rounded-md"
+                      onClick={() => handleDelete(item._id)}
+                    >
                       Xóa
                     </button>
-                    <button className="bg-yellow-200 p-1 rounded-md" onClick={() => {
-                      setIsOpen(true);
-                      setId(item.id);
-                    }}>
+                    <button
+                      className="bg-yellow-200 p-1 rounded-md"
+                      onClick={() => {
+                        setIsOpen(true);
+                        setId(item._id);
+                      }}
+                    >
                       Cập nhật
                     </button>
                   </td>
@@ -122,7 +127,7 @@ import ButtonPage from './../../components/ButtonPage';
         </table>
       </div>
 
-      <ButtonPage setPage={setPage} page={page}/>
+      <ButtonPage setPage={setPage} page={page} />
 
       {isOpen && <PopupProduct setIsOpen={setIsOpen} id={id} setId={setId} />}
       <ToastContainer />

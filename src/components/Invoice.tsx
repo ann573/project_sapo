@@ -52,7 +52,7 @@ const Invoice: React.FC<Props> = ({
       </p>
       <p className="mb-3">
         Số điện thoại:{" "}
-        <span className="font-bold italic">{customer?.tel || ""}</span>
+        <span className="font-bold italic">{customer?.telephone || ""}</span>
       </p>
       <p className="mb-3">Ngày bán: {formattedDate}</p>
       <hr />
@@ -67,7 +67,7 @@ const Invoice: React.FC<Props> = ({
       {products.map((item, index) => {
         return (
           <div key={index} className="grid grid-cols-4 gap-2 text-xs">
-            <div className="col-span-4">{item.title}</div>
+            <div className="col-span-4">{item.name}</div>
             <div className="text-center col-start-2">
               {item.price.toLocaleString("vi", {
                 style: "currency",
@@ -75,7 +75,7 @@ const Invoice: React.FC<Props> = ({
               })}
             </div>
 
-            <div className="text-center">{quantities[item.id]}</div>
+            <div className="text-center">{quantities[item._id]}</div>
             <div className="text-center">
               {(item.price * endInvoice.quantities).toLocaleString("vi", {
                 style: "currency",

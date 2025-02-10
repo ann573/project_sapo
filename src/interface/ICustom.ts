@@ -1,5 +1,6 @@
 export interface ICustomer {
     name:string,
-    tel: string,
+    telephone: string,
     id: string,
+    score: number
 }

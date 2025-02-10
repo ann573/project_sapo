@@ -1,16 +1,17 @@
 import { instance } from ".";
 import { AxiosResponse } from 'axios';
 import { ICustomer } from './../interface/ICustom';
+import { IResponse } from "../interface/IResponse";
 
 type Customer = {
   name: string;
   tel: string;
 };
 export const searchCustomer = async (query: string) => {
-  const { data }: { data: ICustomer[] } = await instance.get(
-    `/customers?tel_like=${query}`
+  const res : AxiosResponse<IResponse> = await instance.get(
+    `/customers?tel=${query}`
   );
-  return data;
+  return res.data.data;
 };
 
 export const getCustomer = async (id: string | number): Promise<ICustomer> => {

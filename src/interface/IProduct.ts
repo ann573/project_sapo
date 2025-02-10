@@ -1,15 +1,21 @@
 export interface IProduct {
-    id:string,
-    title: string,
+    _id:string,
+    name: string,
     price: number,
-    sku: string,
     sort_title: string,
-    storage: number
+    quantity: number,
+    variants: [{
+        _id: string,
+        attributeType: string,
+        size: string,
+        stock: number,
+        price: number
+    }]
 }
 export interface IProductBefore {
-    title: string,
+    name: string,
     price: number,
     sku: string,
     sort_title: string,
-    storage:number
+    quantity:number
 }

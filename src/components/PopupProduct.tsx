@@ -24,9 +24,7 @@ const PopupProduct: React.FC<PopupCustomerProps> = ({
   id,
   setId,
 }) => {
-  const { product, error } = useSelector(
-    (state: RootState) => state.products
-  );
+  const { product, error } = useSelector((state: RootState) => state.products);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -51,25 +49,10 @@ const PopupProduct: React.FC<PopupCustomerProps> = ({
     }
   }, [id, product]);
 
-  function removeVietnameseDiacritics(str: string): string {
-    return str
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/đ/g, "d")
-      .replace(/Đ/g, "D")
-      .replace(/[^a-zA-Z0-9 ]/g, "")
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
   const submitForm = async (value: IProductBefore) => {
-    value["sku"] = removeVietnameseDiacritics(value.title)
-      .toLowerCase()
-      .replace(/\s+/g, "-");
-    value["sort_title"] = value["sort_title"].toUpperCase();
-
-    const {payload} = await dispatch(
-      searchProducts({ field: "sku", searchQuery: value["sku"] })
+    console.log("Form submitted:", value);
+    const { payload } = await dispatch(
+      searchProducts({ searchQuery: value["sort_title"] })
     );
 
     if (payload.length !== 0) {
@@ -113,16 +96,16 @@ const PopupProduct: React.FC<PopupCustomerProps> = ({
               {!id ? "Thêm sản phẩm" : "Cập nhật sản phẩm"}
             </h1>
             <div className="mb-3 flex flex-col gap-3">
-              <label htmlFor="title">Tên sản phẩm:</label>
+              <label htmlFor="name">Tên sản phẩm:</label>
               <input
                 type="text"
-                id="title"
+                id="name"
                 className="w-full focus:outline-none border rounded-sm px-3 py-1"
                 placeholder="Tên sản phẩm"
-                {...register("title")}
+                {...register("name")}
               />
-              {errors.title && (
-                <p className="text-red-500 italic">{errors.title.message}</p>
+              {errors.name && (
+                <p className="text-red-500 italic">{errors.name.message}</p>
               )}
             </div>
             <div className="mb-3 flex flex-col gap-3">
@@ -154,18 +137,18 @@ const PopupProduct: React.FC<PopupCustomerProps> = ({
               )}
             </div>
             <div className="mb-5 flex flex-col gap-3">
-              <label htmlFor="storage">Nhập tồn kho:</label>
+              <label htmlFor="quantity">Nhập tồn kho:</label>
               <input
                 type="number"
-                id="storage"
+                id="quantity"
                 className="w-full focus:outline-none border rounded-sm px-3 py-1"
                 placeholder="Nhập số lượng tồn kho"
-                {...register("storage", {
+                {...register("quantity", {
                   required: { value: true, message: "Bắt buộc nhập tồn kho" },
                 })}
               />
-              {errors.storage && (
-                <p className="text-red-500 italic">{errors.storage.message}</p>
+              {errors.quantity && (
+                <p className="text-red-500 italic">{errors.quantity.message}</p>
               )}
             </div>
             <button className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 py-2 rounded-md text-white font-bold">

@@ -4,7 +4,7 @@ import App from "./App";
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const LoadingComponent = lazy(async () => {
-  await sleep(2500); 
+  await sleep(1000); 
   return { default: App };
 });
 

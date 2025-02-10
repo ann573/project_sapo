@@ -11,21 +11,21 @@ import {
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async ({ page, limit, searchQuery }: { page: number; limit: number; searchQuery: string }) => {
-    const query = searchQuery ? `&q=${searchQuery}` : ""; 
+    const query = searchQuery ? `&sort_title=${searchQuery}` : ""; 
     const response = await instance.get(
-      `products?_page=${page}&_limit=${limit}${query}`
+      `products?skip=${(page-1)*limit}&limit=${limit}${query}`
     );
-    return response.data;
+    return response.data.data; 
   }
 );
 
 export const searchProducts = createAsyncThunk(
   "products/searchProducts",
-  async ({field, searchQuery }: {field:string, searchQuery: string }) => {
+  async ({searchQuery }: {searchQuery: string }) => {
     const response = await instance.get(
-      `products?&${field}_like=${searchQuery}`
+      `products/products/search?sort_title=${searchQuery}`
     );
-    return response.data;
+    return response.data.data;
   }
 );
 

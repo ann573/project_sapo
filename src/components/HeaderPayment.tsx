@@ -94,7 +94,7 @@ const HeaderPayment = ({ setIdProduct }: { setIdProduct: (id: string) => void })
                       key={index}
                       className="flex py-3 px-2 gap-3 items-center text-textColor cursor-pointer hover:bg-second"
                       onClick={() => {
-                        setIdProduct(item.id);
+                        setIdProduct(item._id);
                         setIsSearch(false);
                         if (inputRef.current) {
                           inputRef.current.value = "";
@@ -106,7 +106,7 @@ const HeaderPayment = ({ setIdProduct }: { setIdProduct: (id: string) => void })
                       </div>
                       <div className="flex items-center justify-between w-full">
                         <div className="mr-auto">
-                          <h3>{item.title}</h3>
+                          <h3>{item.name}</h3>
                           <p className="text-xs">{item.sort_title}</p>
                         </div>
                         <p>{item.price.toLocaleString("vi", { style: "currency", currency: "VND" })}</p>

@@ -66,7 +66,7 @@ const productSlice = createSlice({
         (state: ProductState, action: PayloadAction<string | number>) => {
           state.loading = false;
           state.products = state.products.filter(
-            (item: IProduct) => item.id !== action.payload
+            (item: IProduct) => item._id !== action.payload
           );
         }
       )
@@ -77,7 +77,7 @@ const productSlice = createSlice({
         (state: ProductState, action: PayloadAction<IProduct>) => {
           state.loading = false;
           const index: number = state.products.findIndex(
-            (item: IProduct) => item.id === action.payload.id
+            (item: IProduct) => item._id === action.payload._id
           );
           state.products[index] = action.payload;
         }

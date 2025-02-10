@@ -11,7 +11,7 @@ type userRegister = {
 };
 
 export const loginAccount = async (data: userLogin) => {
-  const res = await instance.post("/login", data);
+  const res = await instance.post("/users/login", data);
   return res;
 };
 
