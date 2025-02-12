@@ -94,7 +94,8 @@ const HeaderPayment = ({ setIdProduct }: { setIdProduct: (id: string) => void })
                       key={index}
                       className="flex py-3 px-2 gap-3 items-center text-textColor cursor-pointer hover:bg-second"
                       onClick={() => {
-                        setIdProduct(item._id);
+                        const id = `${item._id}_${item.variants[0]._id}`
+                        setIdProduct(id);
                         setIsSearch(false);
                         if (inputRef.current) {
                           inputRef.current.value = "";

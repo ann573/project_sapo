@@ -22,12 +22,11 @@ const PaymentPage = () => {
     if (!accessToken) navigate("/login");
   }, [navigate]);
 
-  const [idProduct, setIdProduct] = useState<string | number>("");
+  const [idProduct, setIdProduct] = useState<string>("");
   const [products, setProducts] = useState<IProduct[]>([]);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
   const [customPayment, setCustomPayment] = useState<string>("");
-  const [variantOption, setVariantOption] = useState<number>(0);
-
+  const [variantOptions, setVariantOptions] = useState<{ [key: string]: number }>({});
   const [isSearch, setIsSearch] = useState<boolean>(false);
 
   const [percentage, setPercentage] = useState<number>(0);
@@ -41,17 +40,19 @@ const PaymentPage = () => {
   useEffect(() => {
     if (idProduct) {
       (async () => {
-        const data = await getProductById(idProduct);
+        const idFind = idProduct.split("_")[0]
+        const data = await getProductById(idFind);
+        data.idVariant = idProduct
         const existingProduct = products.find((item) => item._id === data._id);
 
         if (existingProduct) {
           setQuantities((prev) => {
-            const newQuantity = (prev[existingProduct._id] || 0) + 1;
-            return { ...prev, [existingProduct._id]: newQuantity };
+            const newQuantity = (prev[idProduct] || 0) + 1;
+            return { ...prev, [idProduct]: newQuantity };
           });
         } else {
           setProducts((prev) => [...prev, data]);
-          setQuantities((prev) => ({ ...prev, [data._id]: 1 }));
+          setQuantities((prev) => ({ ...prev, [idProduct]: 1 }));
         }
         setIdProduct("");
       })();
@@ -205,8 +206,8 @@ const PaymentPage = () => {
             handleDecrement={handleDecrement}
             handleIncrease={handleIncrease}
             setQuantities={setQuantities}
-            variantOption={variantOption}
-            setVariantOption={setVariantOption}
+            variantOptions={variantOptions}
+            setVariantOptions={setVariantOptions}
           />
         </div>
 

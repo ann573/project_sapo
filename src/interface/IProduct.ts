@@ -10,7 +10,8 @@ export interface IProduct {
         size: string,
         stock: number,
         price: number
-    }]
+    }],
+    idVariant: string
 }
 export interface IProductBefore {
     name: string,
