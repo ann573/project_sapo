@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import Cookies from "js-cookie";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getProductById } from "../service/product";
 import "../style/paymentpage.css";
 import HeaderPayment from "./../components/HeaderPayment";
@@ -26,7 +26,9 @@ const PaymentPage = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
   const [customPayment, setCustomPayment] = useState<string>("");
-  const [variantOptions, setVariantOptions] = useState<{ [key: string]: number }>({});
+  const [variantOptions, setVariantOptions] = useState<{
+    [key: string]: number;
+  }>({});
   const [isSearch, setIsSearch] = useState<boolean>(false);
 
   const [percentage, setPercentage] = useState<number>(0);
@@ -40,10 +42,9 @@ const PaymentPage = () => {
   useEffect(() => {
     if (idProduct) {
       (async () => {
-        const idFind = idProduct.split("_")[0]
-        const data = await getProductById(idFind);
-        data.idVariant = idProduct
-        const existingProduct = products.find((item) => item._id === data._id);
+        const existingProduct = products.find(
+          (item) => item.idVariant === idProduct
+        );
 
         if (existingProduct) {
           setQuantities((prev) => {
@@ -51,6 +52,9 @@ const PaymentPage = () => {
             return { ...prev, [idProduct]: newQuantity };
           });
         } else {
+          const idFind = idProduct.split("_")[0];
+          const data = await getProductById(idFind);
+          data.idVariant = idProduct;
           setProducts((prev) => [...prev, data]);
           setQuantities((prev) => ({ ...prev, [idProduct]: 1 }));
         }
@@ -116,7 +120,8 @@ const PaymentPage = () => {
 
   const getTotal = (products: IProduct[]): number => {
     return products.reduce(
-      (total, product) => total + product.price * (quantities[product._id] || 1),
+      (total, product) =>
+        total + product.price * (quantities[product._id] || 1),
       0
     );
   };
@@ -184,7 +189,6 @@ const PaymentPage = () => {
     if (value.includes("-")) toast.error("Số tiền thanh toán đang âm");
     else if (products.length === 0) toast.error("Vui lòng thêm sản phẩm");
     else {
-
       reactToPrintFn();
       setProducts([]);
       setCustomPayment("");

@@ -28,13 +28,15 @@ const ProductList: React.FC<ProductListProps> = ({
   setVariantOptions,
 }) => {
   const [current, setCurrent] = useState<IProduct | null>(null);
-  useEffect(()=>{
-    if(current) {
-      const key = variantOptions[current._id]
-      current.idVariant = `${current._id}_${current.variants[key]._id}`
-    }
-  },[current,variantOptions])
+  console.log(current);
 
+  useEffect(() => {
+    if (current) {
+      const key = variantOptions[current._id];
+      current.idVariant = `${current._id}_${current.variants[key]._id}`;
+    }
+  }, [current, variantOptions]);
+  console.log("---------------------", products);
   return (
     // quantiytyvariant: [{id: value}]
     <>
@@ -119,7 +121,7 @@ const ProductList: React.FC<ProductListProps> = ({
                           ...prev,
                           [product._id]: Number(e.target.value),
                         }));
-                        setCurrent(product)
+                        setCurrent(product);
                       }}
                       className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:border-blue-500 block w-[33%] p-1 cursor-pointer"
                     >
