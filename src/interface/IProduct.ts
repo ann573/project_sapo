@@ -3,7 +3,7 @@ export interface IProduct {
     name: string,
     price: number,
     sort_title: string,
-    quantity: number,
+    stock: number,
     variants: [{
         _id: string,
         attributeType: string,

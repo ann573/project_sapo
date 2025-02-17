@@ -7,6 +7,7 @@ import { IProduct } from "./../interface/IProduct";
 import { searchProduct } from "./../service/product";
 import useDebounce from "../hooks/useDebounce"; // Import hook useDebounce
 
+import imageCart from '../assets/pictures/cart.png'
 const HeaderPayment = ({ setIdProduct }: { setIdProduct: (id: string) => void }) => {
   const nav = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -26,7 +27,7 @@ const HeaderPayment = ({ setIdProduct }: { setIdProduct: (id: string) => void })
   const [searchQuery, setSearchQuery] = useState<string>("");
 
 
-  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const debouncedSearchQuery = useDebounce(searchQuery, 800);
 
   useEffect(() => {
     if (debouncedSearchQuery) {
@@ -102,15 +103,15 @@ const HeaderPayment = ({ setIdProduct }: { setIdProduct: (id: string) => void })
                         }
                       }}
                     >
-                      <div>
-                        <img src="https://placehold.co/50" alt="anh" />
+                      <div className="w-[50px]">
+                        <img src={imageCart} alt="anh" className="w-full"/>
                       </div>
                       <div className="flex items-center justify-between w-full">
                         <div className="mr-auto">
-                          <h3>{item.name}</h3>
+                          <h3 className="text-lg font-semibold">{item.name}</h3>
                           <p className="text-xs">{item.sort_title}</p>
                         </div>
-                        <p>{item.price.toLocaleString("vi", { style: "currency", currency: "VND" })}</p>
+                        <p className="italic">Còn hàng: <span className="font-medium">{item.stock}</span></p>
                       </div>
                     </div>
                   );

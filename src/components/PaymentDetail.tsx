@@ -1,27 +1,28 @@
-import { ToastContainer } from "react-toastify";
 import { ICustomer } from "../interface/ICustom";
 import { IProduct } from "../interface/IProduct";
 
 interface PaymentPageProps {
-    products: IProduct[];  
-    customerSelect: ICustomer | null;  
-    setCustomerSelect: React.Dispatch<React.SetStateAction<ICustomer | null>>; 
-    handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void; 
-    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;  
-    isSearch: boolean;  
-    customer: ICustomer[];  
-    setIsSearch: React.Dispatch<React.SetStateAction<boolean>>;  
-    getTotal: (products: IProduct[]) => number;  
-    percentage: number;  
-    setPercentage: React.Dispatch<React.SetStateAction<number>>;  
-    mustPay: number;  
-    numberArr: number[];  
-    setCustomPayment: React.Dispatch<React.SetStateAction<string>>;  
-    renderPayment: (price: number, index: number) => string;  
-    customPayment: string;  
-    handleCustomPayment: React.ChangeEventHandler<HTMLInputElement>;  
-    setOther: () => string;  
-    onPayment: () => void;  
+  products: IProduct[];
+  customerSelect: ICustomer | null;
+  setCustomerSelect: React.Dispatch<React.SetStateAction<ICustomer | null>>;
+  handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isSearch: boolean;
+  customer: ICustomer[];
+  setIsSearch: React.Dispatch<React.SetStateAction<boolean>>;
+  percentage: number;
+  setPercentage: React.Dispatch<React.SetStateAction<number>>;
+  mustPay: number;
+  numberArr: number[];
+  setCustomPayment: React.Dispatch<React.SetStateAction<string>>;
+  renderPayment: (price: number, index: number) => string;
+  customPayment: string;
+  handleCustomPayment: React.ChangeEventHandler<HTMLInputElement>;
+  setOther: () => string;
+  onPayment: () => void;
+  total: number;
+  setScore: React.Dispatch<React.SetStateAction<number>>;
+  score: number
 }
 
 const PaymentDetail: React.FC<PaymentPageProps> = ({
@@ -33,7 +34,6 @@ const PaymentDetail: React.FC<PaymentPageProps> = ({
   isSearch,
   customer,
   setIsSearch,
-  getTotal,
   percentage,
   setPercentage,
   mustPay,
@@ -44,22 +44,36 @@ const PaymentDetail: React.FC<PaymentPageProps> = ({
   handleCustomPayment,
   setOther,
   onPayment,
+  total,
+  setScore,
+  score
 }) => {
   return (
     <>
       <div className="flex-grow">
         <div className="text-textColor relative">
           {customerSelect ? (
-            <div className="border-b-2 py-1 px-2 flex justify-between items-center">
-              <h4 className="text-red-400 text-lg">
-                {customerSelect.name} - {customerSelect.telephone}
-              </h4>
-              <p
-                className="text-xl font-semibold cursor-pointer"
-                onClick={() => setCustomerSelect(null)}
-              >
-                x
-              </p>
+            <div className="border-b-2 py-1 px-2 flex items-center gap-3">
+              <div>
+                <i className="ri-user-line text-xl"></i>
+              </div>
+              <div className="flex justify-between w-full">
+                <div className="flex flex-col">
+                  <h4 className="text-sm">
+                    <span className="text-blue-400 text-base">
+                      {customerSelect.name}
+                    </span>{" "}
+                    - {customerSelect.telephone}
+                  </h4>
+                  <p>Điểm: {customerSelect.score}</p>
+                </div>
+                <p
+                  className="text-xl font-semibold cursor-pointer " 
+                  onClick={() => setCustomerSelect(null)}
+                >
+                  x
+                </p>
+              </div>
             </div>
           ) : (
             <>
@@ -93,7 +107,7 @@ const PaymentDetail: React.FC<PaymentPageProps> = ({
                       setIsSearch(false);
                     }}
                   >
-                    <div className="py-1 px-2 mr-auto" >
+                    <div className="py-1 px-2 mr-auto">
                       <h2>{customer.name}</h2>
                       <p>{customer.telephone}</p>
                     </div>
@@ -111,12 +125,41 @@ const PaymentDetail: React.FC<PaymentPageProps> = ({
             Tổng tiền (<span>{products.length} sản phẩm</span>)
           </p>
           <p>
-            {getTotal(products).toLocaleString("vi", {
+            {total.toLocaleString("vi", {
               style: "currency",
               currency: "VND",
             })}
           </p>
         </div>
+        {/* ===================================SCORE============================= */}
+        <div className="flex justify-between my-4 pb-2 relative after:content-[''] after:w-1/2 after:h-[1px] after:bg-gray-300 after:absolute after:right-0 after:top-full">
+          <p>Chiết khấu điểm</p>
+          <div>
+            <input
+              type="number"
+              max={customerSelect?.score}
+              value={score}
+              className="text-right focus:outline-none placeholder:text-black"
+              onInput={(e: React.FormEvent<HTMLInputElement>) => {
+                const inputElement = e.target as HTMLInputElement;
+                const value = Number(inputElement.value);
+                setScore(() => {
+                  if ( customerSelect && value < customerSelect?.score){
+                    return value
+                  } else if (customerSelect && value > customerSelect?.score) {
+                    return customerSelect?.score
+                  } else {
+                    return 0
+                  }
+                })
+
+              }}
+            />
+
+            <span> điểm</span>
+          </div>
+        </div>
+        {/* ======================================================== */}
         <div className="flex justify-between my-4 pb-2 relative after:content-[''] after:w-1/2 after:h-[1px] after:bg-gray-300 after:absolute after:right-0 after:top-full">
           <p>Chiết khấu</p>
           <div>
@@ -140,6 +183,7 @@ const PaymentDetail: React.FC<PaymentPageProps> = ({
             <span>%</span>
           </div>
         </div>
+        {/* ========================================================== */}
         <div className="flex justify-between">
           <h3 className="text-xl font-semibold">Khách phải trả</h3>
           <p className="text-xl font-semibold">
@@ -194,8 +238,7 @@ const PaymentDetail: React.FC<PaymentPageProps> = ({
         </button>
       </div>
 
-      <ToastContainer />
-
+      {/* <ToastContainer /> */}
     </>
   );
 };
