@@ -30,6 +30,12 @@ const App = () => {
       case "/register":
         document.title = "Đăng ký";
         break;
+      case "/admin/orders":
+        document.title = "Quản trị đơn hàng";
+        break;
+      case "/admin/customer":
+        document.title = "Quản trị khách hàng";
+        break;
       default:
         document.title = "Ứng dụng của tôi";
     }

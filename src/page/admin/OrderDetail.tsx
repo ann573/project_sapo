@@ -54,11 +54,11 @@ const OrderDetail = () => {
           <div>
             <h3>
               Khách hàng:{" "}
-              <span className="font-bold">{order?.customer.name || "Khách hàng"}</span>
+              <span className="font-bold">{order?.customer?.name || "Khách hàng"}</span>
             </h3>
             <h3 className="my-2 ">
               Số điện thoại:{" "}
-              <span className="font-bold">{order?.customer.telephone || " "}</span>
+              <span className="font-bold">{order?.customer?.telephone || " "}</span>
             </h3>
           </div>
         </div>
@@ -69,7 +69,7 @@ const OrderDetail = () => {
                 <th>STT</th>
                 <th>Tên sản phẩm</th>
                 <th>Số lượng</th>
-                <th>Kiểu</th>
+                <th>Phân loại</th>
                 <th>Đơn giá</th>
                 <th>Tổng tiền</th>
               </tr>

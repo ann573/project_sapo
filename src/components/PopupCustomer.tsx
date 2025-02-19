@@ -12,7 +12,7 @@ interface PopupCustomerProps {
 
 type FormValues = {
   name: string;
-  tel: string;
+  telephone: string;
 };
 
 
@@ -26,12 +26,12 @@ const PopupCustomer: React.FC<PopupCustomerProps> = ({ setIsOpen , setCustomerSe
   });
 
   const submitForm = async (value : FormValues) => {
-    const formattedTel = value.tel.padStart(10, "0");
+    const formattedTel = value.telephone.padStart(10, "0");
     const searchResult = await searchCustomer(formattedTel)
     if (searchResult.length !== 0) {
-      toast.error("Số điện thoại đã có ", {autoClose: 2000,pauseOnHover: false})
+      toast.error("Số điện thoại đã có ", {autoClose: 2000, pauseOnHover: false})
     }else {
-      const data = await createCustomer({ ...value, tel: formattedTel });
+      const data = await createCustomer({ ...value, telephone: formattedTel });
       setCustomerSelect(data)
       setIsOpen(false)
     }
@@ -67,10 +67,10 @@ const PopupCustomer: React.FC<PopupCustomerProps> = ({ setIsOpen , setCustomerSe
                 id="name"
                 placeholder="Nhập số điện thoại"
                 className="border py-1 px-2"
-                {...register("tel")}
+                {...register("telephone")}
               />
-              {errors.tel && (
-                <p className="text-red-500 italic">{errors.tel.message}</p>
+              {errors.telephone && (
+                <p className="text-red-500 italic">{errors.telephone.message}</p>
               )}
             </div>
             <div className="flex justify-end">

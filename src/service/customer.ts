@@ -5,11 +5,11 @@ import { IResponse } from "../interface/IResponse";
 
 type Customer = {
   name: string;
-  tel: string;
+  telephone: string;
 };
 export const searchCustomer = async (query: string) => {
   const res : AxiosResponse<IResponse> = await instance.get(
-    `/customers?tel=${query}`
+    `/customers/search?tel=${query}`
   );
   return res.data.data;
 };
@@ -22,11 +22,11 @@ export const searchCustomer = async (query: string) => {
 export const createCustomer = async (
   dataBody: Customer
 ): Promise<ICustomer> => {
-  const { data }: { data: ICustomer } = await instance.post(
+  const res : AxiosResponse = await instance.post(
     `/customers`,
     dataBody
   );  
-  return data;
+  return res.data.data;
 };
 
 export const removeCustomer = async (id:string) =>{
