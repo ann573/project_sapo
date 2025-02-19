@@ -14,10 +14,10 @@ export const searchCustomer = async (query: string) => {
   return res.data.data;
 };
 
-export const getCustomer = async (id: string | number): Promise<ICustomer> => {
-  const { data }: { data: ICustomer } = await instance.get(`/customers/${id}`);
-  return data;
-};
+// export const getCustomer = async (id: string | number): Promise<ICustomer> => {
+//   const { data }: { data: ICustomer } = await instance.get(`/customers/${id}`);
+//   return data;
+// };
 
 export const createCustomer = async (
   dataBody: Customer
@@ -25,7 +25,7 @@ export const createCustomer = async (
   const { data }: { data: ICustomer } = await instance.post(
     `/customers`,
     dataBody
-  );
+  );  
   return data;
 };
 

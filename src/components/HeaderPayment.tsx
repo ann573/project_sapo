@@ -76,7 +76,7 @@ const HeaderPayment = ({ setIdProduct }: { setIdProduct: (id: string) => void })
 
   return (
     <header className="bg-primary h-14">
-      <div className="max-w-[1400px] mx-auto h-full flex">
+      <div className="max-w-[1400px] 2xl:max-w-[2000px] mx-auto h-full flex">
         <div className="w-[30%] flex items-center h-full relative mr-5">
           <input
             type="text"
@@ -123,7 +123,7 @@ const HeaderPayment = ({ setIdProduct }: { setIdProduct: (id: string) => void })
           )}
         </div>
 
-        <section className="w-[60%] flex overflow-x-auto overflow-y-hidden custom-scrollbar mr-3">
+        <section className="w-[40%] flex overflow-x-auto overflow-y-hidden custom-scrollbar mr-3">
           <div className="flex items-center mr-1">
             {pages.map((page) => (
               <div
@@ -152,12 +152,12 @@ const HeaderPayment = ({ setIdProduct }: { setIdProduct: (id: string) => void })
           </div>
         </section>
 
-        <section className="text-white flex items-center gap-4">
-          <div className="flex items-center gap-3 mr-3">
+        <section className="w-[30%] text-white flex items-center gap-4">
+          <div className="flex items-center gap-3 w-2/3 mr-auto">
             <i className="ri-user-line text-2xl"></i>{" "}
             <p className="cursor-default select-none">{nameUser}</p>
           </div>
-          <div title="Trang chủ">
+          <div title="Trang chủ" className="mr-4">
             <Link to="/admin">
               <i className="ri-home-4-line text-2xl cursor-pointer"></i>
             </Link>

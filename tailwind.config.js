@@ -15,6 +15,9 @@ export default {
       height: {
         'screen-minus-pay': 'calc(100vh - 56px)',
       },
+      screens: {
+        '2xl': '2000px'
+      }
     },
   },
   plugins: [],

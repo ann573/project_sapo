@@ -34,7 +34,7 @@ const LayoutAdmin = () => {
               </li>
               <li>
                 <NavLink
-                  to="/admin/order"
+                  to="/admin/orders"
                   className="w-full block text-center py-3"
                 >
                   Đơn hàng

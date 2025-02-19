@@ -21,7 +21,7 @@ const HeaderAdmin: React.FC<Props> = ({ title }) => {
           <div className="flex items-center">
             <h1 className="text-xl font-semibold">{title}</h1>
           </div>
-          <div className="col-start-7 col-span-4 text-textColor flex items-center gap-5">
+          <div className="col-start-6 col-span-4 text-textColor flex items-center gap-5">
             <div className="flex items-center gap-2 cursor-pointer hover:bg-gray-200 hover:rounded-md py-1 px-1">
               <i className="ri-money-dollar-circle-fill text-xl"></i>
               <p>Vay vốn kinh doanh</p>

@@ -7,7 +7,7 @@ import {
 } from "../../features/products/productsAction";
 import PopupProduct from "../../components/PopupProduct";
 import { toast, ToastContainer } from "react-toastify";
-import useDebounce from "../../hooks/useDebounce"; // import hook debounce của bạn
+import useDebounce from "../../hooks/useDebounce"; 
 import ButtonPage from "./../../components/ButtonPage";
 
 const ProductPage = () => {
@@ -82,7 +82,7 @@ const ProductPage = () => {
             </tr>
           </thead>
           <tbody>
-            {products.map((item, index) => {
+            {/* {products.map((item, index) => {
               return (
                 <tr key={item._id}>
                   <td className="border border-slate-600 text-center">
@@ -122,7 +122,7 @@ const ProductPage = () => {
                   </td>
                 </tr>
               );
-            })}
+            })} */}
           </tbody>
         </table>
       </div>

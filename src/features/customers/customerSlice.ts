@@ -57,7 +57,7 @@ const customerSlice = createSlice({
         (state: CustomerState, action: PayloadAction<string | number>) => {
           state.loading = false;
           state.customers = state.customers.filter(
-            (item: ICustomer) => item.id !== action.payload
+            (item: ICustomer) => item._id !== action.payload
           );
         }
       )
@@ -68,7 +68,7 @@ const customerSlice = createSlice({
         (state: CustomerState, action: PayloadAction<ICustomer>) => {
           state.loading = false;
           const index: number = state.customers.findIndex(
-            (item: ICustomer) => item.id === action.payload.id
+            (item: ICustomer) => item._id === action.payload._id
           );
           state.customers[index] = action.payload;
         }

@@ -101,7 +101,7 @@ const CustomerPage = () => {
             <tbody>
               {customers.map((item, index) => {
                 return (
-                  <tr key={item.id}>
+                  <tr key={item._id}>
                     <td className="border border-slate-600 text-center">
                       {(page - 1) * limit + (index + 1)}
                     </td>
@@ -109,12 +109,12 @@ const CustomerPage = () => {
                       {item.name}
                     </td>
                     <td className="border border-slate-600 text-center">
-                      {item.tel}
+                      {item.telephone}
                     </td>
                     <td className="border border-slate-600 text-center">
                       <button
                         className="bg-red-500 mr-3 p-1 rounded-md"
-                        onClick={() => handleDelete(item.id)}
+                        onClick={() => handleDelete(item._id)}
                       >
                         Xóa
                       </button>
@@ -122,7 +122,7 @@ const CustomerPage = () => {
                         className="bg-yellow-200 p-1 rounded-md"
                         onClick={() => {
                           setIsOpen(true);
-                          setId(item.id);
+                          setId(item._id);
                         }}
                       >
                         Cập nhật
@@ -169,10 +169,10 @@ const CustomerPage = () => {
                     id="tel"
                     placeholder="Nhập số điện thoại"
                     className="border py-1 px-2"
-                    {...register("tel")}
+                    {...register("telephone")}
                   />
-                  {errors.tel && (
-                    <p className="text-red-500 italic">{errors.tel.message}</p>
+                  {errors.telephone && (
+                    <p className="text-red-500 italic">{errors.telephone.message}</p>
                   )}
                 </div>
                 <div className="flex justify-end">
