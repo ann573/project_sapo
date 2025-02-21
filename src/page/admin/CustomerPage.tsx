@@ -13,23 +13,36 @@ import {
 import useDebounce from "../../hooks/useDebounce";
 import { ICustomer } from "../../interface/ICustom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { customerSchema } from './../../schema/customer';
-
+import { customerSchema } from "./../../schema/customer";
+import { AxiosResponse } from "axios";
+import { instance } from "../../service";
+import { useNavigate } from "react-router-dom";
 
 const CustomerPage = () => {
   const { customer, customers, error } = useSelector(
     (state: RootState) => state.customers
   );
   const dispatch = useDispatch<AppDispatch>();
-
-  const {handleSubmit, register, reset, formState:{errors}} =  useForm<ICustomer>({
-    resolver:zodResolver(customerSchema)
-  })
-
+  const nav = useNavigate()
+  const {
+    handleSubmit,
+    register,
+    reset,
+    formState: { errors },
+  } = useForm<ICustomer>({
+    resolver: zodResolver(customerSchema),
+  });
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [id, setId] = useState<string>("");
   const [page, setPage] = useState<number>(1);
+  const [total, setTotal] = useState<number>(0);
+  const [sort, setSort] = useState<number>(0);
+
+  const [icon, setIcon] = useState<JSX.Element>(
+    <i className="ri-menu-line"></i>
+  );
+
   const limit = 10;
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
@@ -45,20 +58,31 @@ const CustomerPage = () => {
     }
   };
 
-
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
   useEffect(() => {
-    dispatch(
-      fetchCustomers({ page, limit, searchQuery: debouncedSearchQuery })
-    );
-  }, [dispatch, page, limit, debouncedSearchQuery]);
+    const fetchTotalOrders = async () => {
+      try {
+        const res: AxiosResponse = await instance.get("/customers/total");
+        setTotal(Math.ceil(res.data.data / limit) || 1);
+      } catch (error) {
+        console.error("Error fetching total orders:", error);
+      }
+    };
+    fetchTotalOrders();
+  }, [limit]);
 
-  useEffect(()=>{
-   dispatch(fetchCustomerById(id))
-  },[id , dispatch])
+  useEffect(() => {
+    dispatch(
+      fetchCustomers({ page, limit, searchQuery: debouncedSearchQuery, sort })
+    );
+  }, [dispatch, page, limit, debouncedSearchQuery, sort]);
+
+  useEffect(() => {
+    dispatch(fetchCustomerById(id));
+  }, [id, dispatch]);
 
   useEffect(() => {
     if (customer) {
@@ -66,15 +90,43 @@ const CustomerPage = () => {
     }
   }, [customer, reset]);
 
-  const submitForm = (value:ICustomer) => {
-    dispatch(updateNewCustomer({data:value,id}))
-    if(error) {
-      toast.error("Có lỗi xảy ra")
-    }  else {
-      setIsOpen(false)
+  const submitForm = async (value: ICustomer) => {
+    await dispatch(updateNewCustomer({ data: value, id }));
+    if (error) {
+      toast.error("Có lỗi xảy ra");
+    } else {
+      setIsOpen(false);
+      dispatch(
+        fetchCustomers({ page, limit, searchQuery: debouncedSearchQuery, sort })
+      );
+      setId("");
     }
-  }
+  };
 
+  const changeDesc = () => {
+    setSort((prev) => prev + 1);
+
+    const nextSort = (sort + 1) % 3;
+    switch (nextSort) {
+      case 0:
+        setIcon(<i className="ri-menu-line"></i>);
+        break;
+      case 1:
+        setIcon(<i className="ri-sort-asc"></i>);
+        break;
+      case 2:
+        setIcon(<i className="ri-sort-desc"></i>);
+        break;
+      default:
+        setIcon(<i className="ri-menu-line"></i>);
+        break;
+    }
+  };
+
+  const toCusTomerDetail = (id: string) => {
+    event?.preventDefault()
+    nav(`/admin/customer/${id}`)
+  };
   return (
     <>
       <div className="bg-white px-10 py-5">
@@ -95,13 +147,23 @@ const CustomerPage = () => {
                 <th className="border border-slate-600">STT</th>
                 <th className="border border-slate-600">Tên</th>
                 <th className="border border-slate-600">Số điện thoại</th>
+                <th
+                  className="border border-slate-600 py-1 select-none cursor-pointer"
+                  onClick={changeDesc}
+                >
+                  Điểm tích lũy <span>{icon}</span>
+                </th>
                 <th className="border border-slate-600">Hành động</th>
               </tr>
             </thead>
             <tbody>
               {customers.map((item, index) => {
                 return (
-                  <tr key={item._id}>
+                  <tr
+                    key={item._id}
+                    className="hover:cursor-pointer hover:bg-slate-100"
+                    onClick={() => toCusTomerDetail(item._id)}
+                  >
                     <td className="border border-slate-600 text-center">
                       {(page - 1) * limit + (index + 1)}
                     </td>
@@ -112,6 +174,9 @@ const CustomerPage = () => {
                       {item.telephone}
                     </td>
                     <td className="border border-slate-600 text-center">
+                      {item.score}
+                    </td>
+                    <td className="border border-slate-600 text-center">
                       <button
                         className="bg-red-500 mr-3 p-1 rounded-md"
                         onClick={() => handleDelete(item._id)}
@@ -120,7 +185,8 @@ const CustomerPage = () => {
                       </button>
                       <button
                         className="bg-yellow-200 p-1 rounded-md"
-                        onClick={() => {
+                        onClick={(event) => {
+                          event?.stopPropagation()
                           setIsOpen(true);
                           setId(item._id);
                         }}
@@ -134,7 +200,7 @@ const CustomerPage = () => {
             </tbody>
           </table>
         </div>
-        <ButtonPage setPage={setPage} page={page} />
+        <ButtonPage setPage={setPage} page={page} total={total} />
 
         {isOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -172,7 +238,9 @@ const CustomerPage = () => {
                     {...register("telephone")}
                   />
                   {errors.telephone && (
-                    <p className="text-red-500 italic">{errors.telephone.message}</p>
+                    <p className="text-red-500 italic">
+                      {errors.telephone.message}
+                    </p>
                   )}
                 </div>
                 <div className="flex justify-end">

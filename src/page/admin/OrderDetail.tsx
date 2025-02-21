@@ -90,7 +90,7 @@ const OrderDetail = () => {
             }
             <tr>
               <td colSpan={5}></td>
-              <td className="text-center border-t py-5 font-bold text-lg">
+              <td className="text-center border-t pt-2 font-bold text-lg">
                 {order?.total.toLocaleString('vi', {style : 'currency', currency : 'VND'})}
               </td>
             </tr>

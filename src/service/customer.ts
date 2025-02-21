@@ -38,7 +38,7 @@ export const updateCustomer = async (dataBody: ICustomer, id:string) =>{
     const {data}: { data: ICustomer } = await instance.patch(`/customers/${id}`, dataBody) 
     return data
 }
-export const getCustomerById = async (id: string | number): Promise<ICustomer> => {
-    const { data }: { data: ICustomer } = await instance.get(`/customers/${id}`)
-    return data
+export const getCustomerById = async (id: string ): Promise<ICustomer> => {
+    const res : AxiosResponse= await instance.get(`/customers/${id}`)
+    return res.data.data
 }

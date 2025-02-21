@@ -9,6 +9,7 @@ import LoginPage from "./page/LoginPage";
 import PaymentPage from "./page/PaymentPage";
 import RegisterPage from "./page/RegisterPage";
 import OrderDetail from "./page/admin/OrderDetail";
+import CustomerDetail from './page/admin/CustomerDetail';
 
 const App = () => {
   const location = useLocation();
@@ -49,6 +50,7 @@ const App = () => {
             <Route index element={<DashBoard />} />
             <Route path="product" element={<ProductPage />} />
             <Route path="customer" element={<CustomerPage />} />
+            <Route path="customer/:id" element={<CustomerDetail />} />
             <Route path="orders" element={<OrderPage />} />
             <Route path="orders/:id" element={<OrderDetail />} />
           </Route>

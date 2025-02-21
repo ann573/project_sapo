@@ -19,16 +19,32 @@ export const fetchCustomers = createAsyncThunk(
     page,
     limit,
     searchQuery,
+    sort,
   }: {
     page: number;
     limit: number;
     searchQuery: string;
+    sort: number;
   }) => {
     const query = searchQuery ? `&telephone=${searchQuery}` : "";
+    let isDesc;
+    switch (sort % 3) {
+      case 0:
+        isDesc = `&sort=0`;
+        break;
+      case 1:
+        isDesc = `&sort=1`;
+        break;
+      case 2:
+        isDesc = `&sort=-1`;
+        break;
+      default:
+        break;
+    }
     const response = await instance.get(
-      `customers?skip=${(page - 1) * limit}&limit=${limit}${query}`
+      `customers?skip=${(page - 1) * limit}&limit=${limit}${query}${isDesc}`
     );
-    return response.data;
+    return response.data.data;
   }
 );
 

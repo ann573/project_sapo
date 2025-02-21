@@ -4,11 +4,10 @@ interface ButtonProps {
   page: number;
   total: number
 }
-
 const ButtonPage: React.FC<ButtonProps> = ({ setPage, page,total }) => {
-  const handleNextPage = () => setPage((prevPage) => prevPage + 1);
+  const handleNextPage = () => setPage((prevPage) => Math.min(prevPage + 1, total));
   const handlePrevPage = () => setPage((prevPage) => Math.max(prevPage - 1, 1));
-
+  
   
   return (
     <>

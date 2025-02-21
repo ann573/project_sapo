@@ -20,11 +20,12 @@ const OrderPage = () => {
       dispatch(fetchOrders({ page, limit }));
 
       const res :AxiosResponse = await instance.get("/orders/total");
+
       setTotal(() => {
-        return Math.ceil(res.data/limit ) || 1
+        return Math.ceil(res.data.data/limit ) || 1
       })
     })();
-  }, []);
+  }, [page, limit, dispatch]); 
 
 
   useEffect(() => {
@@ -78,7 +79,7 @@ const OrderPage = () => {
         </table>
       </div>
 
-      {orders.orders.length === 10  ? (
+      {orders.orders.length === 10 || page !== 1 ? (
         <div className="py-5 px-10">
           <ButtonPage setPage={setPage} page={page} total={total}/>
         </div>
