@@ -10,6 +10,8 @@ import PaymentPage from "./page/PaymentPage";
 import RegisterPage from "./page/RegisterPage";
 import OrderDetail from "./page/admin/OrderDetail";
 import CustomerDetail from './page/admin/CustomerDetail';
+import EmployeePage from './page/admin/EmployeePage';
+import VariantPage from "./page/admin/VariantPage";
 
 const App = () => {
   const location = useLocation();
@@ -53,6 +55,8 @@ const App = () => {
             <Route path="customer/:id" element={<CustomerDetail />} />
             <Route path="orders" element={<OrderPage />} />
             <Route path="orders/:id" element={<OrderDetail />} />
+            <Route path="employee" element={<EmployeePage />} />
+            <Route path="variants" element={<VariantPage />} />
           </Route>
 
           <Route path="/login" element={<LoginPage />} />

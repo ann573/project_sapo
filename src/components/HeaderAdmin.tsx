@@ -18,7 +18,7 @@ const HeaderAdmin: React.FC<Props> = ({ title }) => {
               className="w-full"
             />
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center col-span-4">
             <h1 className="text-xl font-semibold">{title}</h1>
           </div>
           <div className="col-start-6 col-span-4 text-textColor flex items-center gap-5">

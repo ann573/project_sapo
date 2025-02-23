@@ -70,12 +70,15 @@ const HeaderPayment = ({ setIdProduct }: { setIdProduct: (id: string) => void })
 
   const logoutAccount = (): void => {
     nav("/login");
+    
     Cookies.remove("user");
     Cookies.remove("accessToken");
-  };
+    Cookies.remove("refreshToken");
+    Cookies.remove("role");
+  };  
 
   return (
-    <header className="bg-primary h-14">
+    <header className="bg-primary_header h-14">
       <div className="max-w-[1400px] 2xl:max-w-[2000px] mx-auto h-full flex">
         <div className="w-[30%] flex items-center h-full relative mr-5">
           <input

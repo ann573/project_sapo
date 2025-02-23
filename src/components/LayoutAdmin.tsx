@@ -36,6 +36,7 @@ const LayoutAdmin = () => {
                 <NavLink
                   to="/admin/orders"
                   className="w-full block text-center py-3"
+                  onClick={() => setTitle("Đơn hàng")}
                 >
                   Đơn hàng
                 </NavLink>
@@ -44,8 +45,27 @@ const LayoutAdmin = () => {
                 <NavLink
                   to="/admin/customer"
                   className="w-full block text-center py-3"
+                  onClick={() => setTitle("Khách hàng")}
                 >
                   Khách hàng
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/admin/employee"
+                  className="w-full block text-center py-3"
+                  onClick={() => setTitle("Nhân viên")}
+                >
+                  Quản lý nhân viên
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/admin/variants"
+                  className="w-full block text-center py-3"
+                  onClick={() => setTitle("Biến thể sản phẩm")}
+                >
+                  Quản lý biến thể
                 </NavLink>
               </li>
               <hr />

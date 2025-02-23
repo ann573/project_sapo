@@ -59,6 +59,7 @@ const LoginPage = () => {
         if (res.success) {
           nav("/");
           Cookies.set("user", res.data?.user.name);
+          Cookies.set("role", res.data?.user.role);
           Cookies.set("accessToken", res.data.accessToken);
         }
       }

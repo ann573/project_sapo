@@ -11,7 +11,9 @@ type userRegister = {
 };
 
 export const loginAccount = async (data: userLogin) => {
-  const res = await instance.post("/users/login", data);
+  const res = await instance.post("/users/login", data,  {
+    withCredentials: true, 
+  });
   return res;
 };
 

@@ -34,7 +34,6 @@ const OrderPage = () => {
     }
   }, [orders.orders, page]);
 
-  console.log(orders.orders.length );
   return (
     <section className="bg-white ">
       <h1 className="text-xl pt-3 pb-1 mb-2 px-5 font-bold border-b">

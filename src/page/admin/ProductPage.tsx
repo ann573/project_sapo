@@ -12,6 +12,7 @@ import ButtonPage from "./../../components/ButtonPage";
 
 const ProductPage = () => {
   const { products, error } = useSelector((state: RootState) => state.products);
+  console.log(products);
   const [page, setPage] = useState<number>(1);
   const limit = 10;
 

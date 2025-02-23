@@ -31,7 +31,6 @@ const DashBoard = () => {
   
         const resWeek: AxiosResponse = await instance.get("/orders/week");
         setOrderWeek(resWeek.data.data);
-        console.log(resWeek.data.data);
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu:", error);
       }
