@@ -1,11 +1,13 @@
 import { ICustomer } from "../interface/ICustom";
 import { IProduct } from "../interface/IProduct";
+import useDebounce from "../hooks/useDebounce";
+import { useEffect, useState } from "react";
 
 interface PaymentPageProps {
   products: IProduct[];
   customerSelect: ICustomer | null;
   setCustomerSelect: React.Dispatch<React.SetStateAction<ICustomer | null>>;
-  handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSearch: (query: string) => void;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isSearch: boolean;
   customer: ICustomer[];
@@ -22,7 +24,7 @@ interface PaymentPageProps {
   onPayment: () => void;
   total: number;
   setScore: React.Dispatch<React.SetStateAction<number>>;
-  score: number
+  score: number;
 }
 
 const PaymentDetail: React.FC<PaymentPageProps> = ({
@@ -46,8 +48,16 @@ const PaymentDetail: React.FC<PaymentPageProps> = ({
   onPayment,
   total,
   setScore,
-  score
+  score,
 }) => {
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 800);
+
+  useEffect(() => {
+    if (debouncedSearchQuery) {
+      handleSearch(debouncedSearchQuery);
+    }
+  }, [debouncedSearchQuery]);
   return (
     <>
       <div className="flex-grow">
@@ -68,7 +78,7 @@ const PaymentDetail: React.FC<PaymentPageProps> = ({
                   <p>Điểm: {customerSelect.score}</p>
                 </div>
                 <p
-                  className="text-xl font-semibold cursor-pointer " 
+                  className="text-xl font-semibold cursor-pointer "
                   onClick={() => setCustomerSelect(null)}
                 >
                   x
@@ -82,7 +92,7 @@ const PaymentDetail: React.FC<PaymentPageProps> = ({
                 className="w-full border-b-[3px] focus:outline-none py-1 px-7"
                 placeholder="Thêm khách hàng vào đơn"
                 onInput={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  handleSearch(e)
+                  setSearchQuery(e.target.value)
                 }
               />
               <i className="ri-search-line text-xl absolute left-0 top-1/2 -translate-y-1/2 cursor-pointer"></i>
@@ -144,15 +154,14 @@ const PaymentDetail: React.FC<PaymentPageProps> = ({
                 const inputElement = e.target as HTMLInputElement;
                 const value = Number(inputElement.value);
                 setScore(() => {
-                  if ( customerSelect && value < customerSelect?.score){
-                    return value
+                  if (customerSelect && value < customerSelect?.score) {
+                    return value;
                   } else if (customerSelect && value > customerSelect?.score) {
-                    return customerSelect?.score
+                    return customerSelect?.score;
                   } else {
-                    return 0
+                    return 0;
                   }
-                })
-
+                });
               }}
             />
 

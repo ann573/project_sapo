@@ -156,10 +156,10 @@ const PaymentPage = () => {
     return formatNumber(price);
   };
 
-  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value) {
+  const handleSearch = async (query: string) => {
+    if (query) {
       setIsSearch(true);
-      const data = await searchCustomer(e.target.value);
+      const data = await searchCustomer(query);
       setCustomer([...data]);
     } else setIsSearch(false);
   };
@@ -193,14 +193,16 @@ const PaymentPage = () => {
       return;
     } else {
       const updatedProducts = products.map((product) => {
-        const idVariant = product.idVariant.split("_")[1]
-        const findIndex = product.variants.findIndex((item) => item._id === idVariant)
+        const idVariant = product.idVariant.split("_")[1];
+        const findIndex = product.variants.findIndex(
+          (item) => item._id === idVariant
+        );
         return {
           ...product,
           quantity: quantities[product.idVariant] || 1,
           variant: product.variants[findIndex].size,
           price: product.variants[findIndex].price,
-          idVariant
+          idVariant,
         };
       });
       const result = {
@@ -208,11 +210,11 @@ const PaymentPage = () => {
         quantities,
         percentage,
         total,
-        customer: customerSelect?._id ,
+        customer: customerSelect?._id,
         score,
       };
       try {
-        await instance.post("/orders", result);;
+        await instance.post("/orders", result);
       } catch (error) {
         console.log(error);
       }
