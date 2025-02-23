@@ -22,6 +22,8 @@ const DashBoard = () => {
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [totalOrders, setTotalOrders] = useState<number>(0);
   const [orderWeek, setOrderWeek] = useState<OrdersWeek[]>([]);
+
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,7 +44,7 @@ const DashBoard = () => {
   const formatCurrency = (value: number | string) => {
     return value.toLocaleString("vi", { style: "currency", currency: "VND" });
   };
-
+  
   return (
     <>
       <section className="bg-white mb-10">

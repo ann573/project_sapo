@@ -49,7 +49,7 @@ const OrderDetail = () => {
             <h3>
               Nhân viên thanh toán:{" "}
               <span className="text-lg font-semibold">
-                {order?.employee.name}
+                {order?.employee.name || "Nhân viên"}
               </span>
             </h3>
             <h3 className="my-2 ">
