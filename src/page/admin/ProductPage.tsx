@@ -19,8 +19,7 @@ const ProductPage = () => {
   const [total, setTotal] = useState<number>(0);
 
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [id, setId] = useState<string>("");
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  // const [id, setId] = useState<string>("");
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -147,10 +146,7 @@ const ProductPage = () => {
 
                       <button
                         className="bg-yellow-200 p-1 rounded-md"
-                        onClick={() => {
-                          setIsOpen(true);
-                          setId(item._id);
-                        }}
+                        onClick={() => {}}
                       >
                         <Link to={`/admin/product/add_and_update/${item._id}`}>
                           Cập nhật

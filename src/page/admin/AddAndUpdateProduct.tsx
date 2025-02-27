@@ -1,7 +1,6 @@
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "store/store";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -10,22 +9,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useForm, Controller } from "react-hook-form";
+import { fetchSingleAttributeValue } from "@/features/attributeValue/attributeAction";
+import { fetchProductById } from "@/features/products/productsAction";
+import { instance } from "@/service";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { productSchema } from "./../../schema/product";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { AxiosResponse } from "axios";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { PulseLoader } from "react-spinners";
+import { toast, ToastContainer } from "react-toastify";
+import { AppDispatch, RootState } from "store/store";
 import {
   fetchAttribute,
   fetchAttributeById,
 } from "./../../features/variants/variantAction";
-import { fetchSingleAttributeValue } from "@/features/attributeValue/attributeAction";
-import { Button } from "@/components/ui/button";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { AxiosResponse } from "axios";
-import { instance } from "@/service";
-import { toast, ToastContainer } from "react-toastify";
-import { PulseLoader } from "react-spinners";
-import { fetchProductById } from "@/features/products/productsAction";
+import { productSchema } from "./../../schema/product";
 
 type Inputs = {
   name: string;
@@ -41,9 +41,7 @@ type Inputs = {
 
 const AddAndUpdateProduct = () => {
   const { id } = useParams();
-  const { attributes, attribute } = useSelector(
-    (state: RootState) => state.attributes
-  );
+  const { attributes } = useSelector((state: RootState) => state.attributes);
   const { attributesValue } = useSelector(
     (state: RootState) => state.attributesValue
   );
@@ -83,14 +81,25 @@ const AddAndUpdateProduct = () => {
           setIdAttribute(product?.variants[0].attribute.attributeId);
           setAttributeValues((prev) => {
             prev.length = 0;
-            product?.variants.forEach((item) => {
+            product?.variants.forEach((item, index) => {
               const dataBody = {
                 id: item.attribute._id,
                 price: item.price,
                 stock: item.stock,
                 name: item.attribute.name,
               };
-
+              setValue(
+                `attributeValues.${index}.attribute`,
+                item.attribute._id || ""
+              );
+              setValue(
+                `attributeValues.${index}.price`,
+                String(item.price) || ""
+              );
+              setValue(
+                `attributeValues.${index}.stock`,
+                String(item.stock) || ""
+              );
               prev.push(dataBody);
             });
             return prev;
@@ -112,12 +121,16 @@ const AddAndUpdateProduct = () => {
     }
   }, [idAttribute, setValue, product, id]);
 
-  useEffect(() => {
-    if (attributeValues.length > 0) {
-      console.log(attributeValues);
-      setValue("attributeValues", attributeValues, { shouldValidate: true });
-    }
-  }, [attributeValues, setValue]);
+  // useEffect(() => {
+  //   // Đồng bộ dữ liệu từ API vào form
+  //   if (attributeValues.length > 0) {
+  //     attributeValues.forEach((item, index) => {
+  //       setValue(`attributeValues.${index}.attribute`, item.id || "");
+  //       setValue(`attributeValues.${index}.price`, item.price || "");
+  //       setValue(`attributeValues.${index}.stock`, item.stock || "");
+  //     });
+  //   }
+  // }, [attributeValues, setValue]);
 
   const handleValueChange = async (value: string) => {
     await dispatch(fetchSingleAttributeValue(value));
@@ -252,7 +265,7 @@ const AddAndUpdateProduct = () => {
           </div>
 
           <Button
-            className="my-5"
+            className="my-5 bg-blue-700 hover:bg-blue-500"
             onClick={(event) => {
               event.preventDefault();
               handleAddAttributeValue();
@@ -345,7 +358,10 @@ const AddAndUpdateProduct = () => {
                   )}
                 />
 
-                <Button onClick={() => handleRemoveAttributeValue(index)}>
+                <Button
+                  onClick={() => handleRemoveAttributeValue(index)}
+                  className="bg-red-500 hover:bg-red-300"
+                >
                   Xóa
                 </Button>
               </div>
@@ -356,7 +372,7 @@ const AddAndUpdateProduct = () => {
               <Link to="/admin/product">Quay lại</Link>
             </Button>
             <Button type="submit" className="bg-green-500 hover:bg-green-700">
-              Thêm mới sản phẩm
+              {id ? "Cập nhật sản phẩm" : "Thêm mới sản phẩm"}
             </Button>
           </div>
         </form>
