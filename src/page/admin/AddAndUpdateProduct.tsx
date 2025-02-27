@@ -10,7 +10,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { fetchSingleAttributeValue } from "@/features/attributeValue/attributeAction";
-import { fetchProductById } from "@/features/products/productsAction";
 import { instance } from "@/service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosResponse } from "axios";
@@ -25,8 +24,8 @@ import {
   fetchAttribute,
   fetchAttributeById,
 } from "./../../features/variants/variantAction";
-import { productSchema } from "./../../schema/product";
 import { IProduct } from "./../../interface/IProduct";
+import { productSchema } from "./../../schema/product";
 
 type Inputs = {
   name: string;
@@ -48,7 +47,27 @@ const AddAndUpdateProduct = () => {
   );
   // const { product } = useSelector((state: RootState) => state.products);
 
-  const [products, setProducts] = useState<IProduct>({});
+  const [products, setProducts] = useState<IProduct>({
+    _id: "",
+    name: "",
+    price: 0,
+    sort_title: "",
+    stock: 0,
+    variants: [
+      {
+        _id: "",
+        attribute: {
+          _id: "",
+          attributeId: "",
+          name: "",
+        },
+        size: "",
+        stock: 0,
+        price: 0,
+      },
+    ],
+    idVariant: "",
+  });
   const dispatch = useDispatch<AppDispatch>();
 
   const [attributeValues, setAttributeValues] = useState<any[]>([
@@ -79,33 +98,48 @@ const AddAndUpdateProduct = () => {
       (async () => {
         const res = await instance.get(`/products/single/${id}`);
         setProducts(res.data.data);
-        console.log(res.data.data);
+        await dispatch(
+          fetchSingleAttributeValue(
+            res.data.data?.variants[0].attribute.attributeId
+          )
+        );
+
         if (res.data.data) {
           setIdAttribute(res.data.data?.variants[0].attribute.attributeId);
           setAttributeValues((prev) => {
             prev.length = 0;
-            res.data.data?.variants.forEach((item, index) => {
-              const dataBody = {
-                id: item.attribute._id,
-                price: item.price,
-                stock: item.stock,
-                name: item.attribute.name,
-              };
-              console.log(dataBody);
-              setValue(
-                `attributeValues.${index}.attribute`,
-                item.attribute._id || ""
-              );
-              setValue(
-                `attributeValues.${index}.price`,
-                String(item.price) || ""
-              );
-              setValue(
-                `attributeValues.${index}.stock`,
-                String(item.stock) || ""
-              );
-              prev.push(dataBody);
-            });
+            res.data.data?.variants.forEach(
+              (
+                item: {
+                  stock: any;
+                  price: any;
+                  attribute: any;
+                  id: string;
+                },
+                index: number
+              ) => {
+                const dataBody = {
+                  id: item.attribute._id,
+                  price: item.price,
+                  stock: item.stock,
+                  name: item.attribute.name,
+                };
+                console.log(dataBody);
+                setValue(
+                  `attributeValues.${index}.attribute`,
+                  item.attribute._id || ""
+                );
+                setValue(
+                  `attributeValues.${index}.price`,
+                  String(item.price) || ""
+                );
+                setValue(
+                  `attributeValues.${index}.stock`,
+                  String(item.stock) || ""
+                );
+                prev.push(dataBody);
+              }
+            );
             return prev;
           });
         }
@@ -126,7 +160,6 @@ const AddAndUpdateProduct = () => {
   }, [idAttribute, setValue, products, id]);
 
   useEffect(() => {
-    // Đồng bộ dữ liệu từ API vào form
     if (attributeValues.length > 0) {
       attributeValues.forEach((item, index) => {
         setValue(`attributeValues.${index}.attribute`, item.id || "");

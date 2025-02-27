@@ -12,7 +12,7 @@ interface ProductListProps {
     React.SetStateAction<{ [key: string]: number }>
   >;
   setProducts: React.Dispatch<React.SetStateAction<IProduct[]>>;
-  setTotal:  React.Dispatch<React.SetStateAction<number>>
+  setTotal: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const ProductList: React.FC<ProductListProps> = ({
@@ -23,57 +23,59 @@ const ProductList: React.FC<ProductListProps> = ({
   handleIncrease,
   setQuantities,
   setProducts,
-  setTotal
+  setTotal,
 }) => {
-
   const handleVariantChange = (product: IProduct, newIndex: number) => {
     const newVariantId = product.variants[newIndex]._id;
     const newIdVariant = `${product._id}_${newVariantId}`;
     const oldIdVariant = product.idVariant;
-  
+
     if (newIdVariant === oldIdVariant) return; // Nếu không thay đổi variant thì không làm gì cả
-  
+
     setProducts((prevProducts) => {
       const updatedProducts = prevProducts.map((p) =>
         p.idVariant === oldIdVariant ? { ...p, idVariant: newIdVariant } : p
       );
-  
+
       // Kiểm tra xem có sản phẩm nào đã có `idVariant` mới chưa
       const existingProductIndex = updatedProducts.findIndex(
         (p) => p.idVariant === newIdVariant
       );
-  
+
       if (existingProductIndex !== -1) {
         // Nếu đã tồn tại sản phẩm trùng, chỉ gộp số lượng và xóa dòng trùng
         setQuantities((prev) => {
           const updatedQuantities = { ...prev };
-  
+
           // Chỉ cộng dồn nếu `newIdVariant` đã tồn tại từ trước
-          if (newIdVariant in updatedQuantities){
+          if (newIdVariant in updatedQuantities) {
             updatedQuantities[newIdVariant] += prev[oldIdVariant] || 1;
           } else {
             // Nếu chưa tồn tại, giữ nguyên số lượng cũ thay vì tăng thêm
             updatedQuantities[newIdVariant] = prev[oldIdVariant] || 1;
           }
-  
+
           delete updatedQuantities[oldIdVariant]; // Xóa key cũ
           return updatedQuantities;
         });
-  
+
         // Xóa dòng trùng, giữ nguyên vị trí dòng đầu tiên
         return updatedProducts.filter((p, index) => {
           return index === existingProductIndex || p.idVariant !== newIdVariant;
         });
       }
-  
+
       return updatedProducts;
     });
   };
-  
+
   useEffect(() => {
     const total = products.reduce((sum, product) => {
       const quantity = quantities[product.idVariant] || 1;
-      const price = product.variants.find(v => `${product._id}_${v._id}` === product.idVariant)?.price || 0;
+      const price =
+        product.variants.find(
+          (v) => `${product._id}_${v._id}` === product.idVariant
+        )?.price || 0;
       return sum + quantity * price;
     }, 0);
     setTotal(total);
@@ -95,9 +97,11 @@ const ProductList: React.FC<ProductListProps> = ({
           <div>
             {products.map((product, index) => {
               const selectedVariantIndex = product.variants.findIndex(
-                (variant) => `${product._id}_${variant._id}` === product.idVariant
+                (variant) =>
+                  `${product._id}_${variant._id}` === product.idVariant
               );
-              const selectedVariant = product.variants[selectedVariantIndex] || product.variants[0];
+              const selectedVariant =
+                product.variants[selectedVariantIndex] || product.variants[0];
 
               return (
                 <div
@@ -155,10 +159,15 @@ const ProductList: React.FC<ProductListProps> = ({
                   </div>
 
                   <div className="col-start-8 col-span-3 flex justify-center gap-3 items-center">
-                    <label htmlFor=""> {product.variants[0].attributeType}: </label>
+                    <label htmlFor="">
+                      {" "}
+                      {"Phân loại"}:{" "}
+                    </label>
                     <select
                       value={selectedVariantIndex}
-                      onChange={(e) => handleVariantChange(product, Number(e.target.value))}
+                      onChange={(e) =>
+                        handleVariantChange(product, Number(e.target.value))
+                      }
                       className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:border-blue-500 block w-[33%] p-1 cursor-pointer"
                     >
                       {product.variants.map((item, idx) => (
@@ -181,7 +190,8 @@ const ProductList: React.FC<ProductListProps> = ({
                   <div className="flex justify-end items-center text-lg font-semibold">
                     <p>
                       {(
-                        selectedVariant.price * (quantities[product.idVariant] || 1)
+                        selectedVariant.price *
+                        (quantities[product.idVariant] || 1)
                       ).toLocaleString("vi", {
                         style: "currency",
                         currency: "VND",
@@ -194,7 +204,7 @@ const ProductList: React.FC<ProductListProps> = ({
           </div>
         )}
       </div>
-      
+
       <div className="grid grid-cols-4 h-[15%] px-3 py-5 gap-10">
         <Link
           className="bg-[#e3eefc] rounded-xl text-xl font-medium flex items-center justify-center"

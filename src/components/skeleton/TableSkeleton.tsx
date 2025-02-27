@@ -10,7 +10,7 @@ const TableSkeleton = () => {
       <table className="space-y-2">
         <thead>
           <tr>
-            {columns.map((col, index) => (
+            {columns.map((_, index) => (
               <th key={index}>
                 <Skeleton className="h-10 w-[200px]" />
               </th>
@@ -21,7 +21,7 @@ const TableSkeleton = () => {
           {/* Hiển thị Skeleton khi đang tải dữ liệu */}
           {Array.from({ length: 10 }).map((_, index) => (
             <tr key={index} >
-              {columns.map((col, colIndex) => (
+              {columns.map((_, colIndex) => (
                 <td key={colIndex}>
                   <Skeleton className="h-10 w-[200px] my-1" />
                 </td>
