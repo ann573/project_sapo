@@ -8,7 +8,10 @@ const LayoutAdmin = () => {
     <>
       <HeaderAdmin title={title} />
       <section className="grid grid-cols-12">
-        <div className="col-span-2 h-full bg-[#1a2c3f]" style={{ minHeight: 'calc(100vh - 66px)' }}>
+        <div
+          className="col-span-2 h-full bg-[#1a2c3f]"
+          style={{ minHeight: "calc(100vh - 66.74px)" }}
+        >
           <nav className="text-white w-full">
             <ul>
               <li>
@@ -17,7 +20,6 @@ const LayoutAdmin = () => {
                   end
                   className="w-full block text-center py-3"
                   onClick={() => setTitle("Tổng quát")}
-
                 >
                   Trang chủ
                 </NavLink>
@@ -28,7 +30,6 @@ const LayoutAdmin = () => {
                   className="w-full block text-center py-3"
                   onClick={() => setTitle("Sản phẩm")}
                 >
-                  
                   Sản phẩm
                 </NavLink>
               </li>
@@ -78,7 +79,7 @@ const LayoutAdmin = () => {
           </nav>
         </div>
         <div className="col-span-10 bg-[#f4f6f8] py-5 px-32 h-full">
-        <Outlet />
+          <Outlet />
         </div>
       </section>
     </>

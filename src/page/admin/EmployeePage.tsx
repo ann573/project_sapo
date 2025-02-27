@@ -1,8 +1,8 @@
 import ModelAddEmployee from "@/components/ModelAddEmployee";
-import { Card, CardContent } from "@/components/ui/card";
 import { instance } from "@/service";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 import {
   Bar,
   BarChart,
@@ -14,6 +14,18 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 type TRevenueEmployee = {
   name: string;
   totalRevenue: number;
@@ -24,19 +36,23 @@ type TResTotal = {
   totalOrders: number;
 };
 
-type TEmployee = {
+export type TEmployee = {
   _id: string;
   email: string;
   name: string;
 };
+
 const EmployeePage = () => {
   const [revenue, setRevenue] = useState<TRevenueEmployee[]>();
   const [total, setTotal] = useState<TResTotal>({
     totalAmount: 0,
     totalOrders: 0,
   });
-  const [employees, setEmployee] = useState<TEmployee[]>();
+  const [employees, setEmployee] = useState<TEmployee[]>([]);
   const role = Cookies.get("role");
+
+  const [editingName, setEditingName] = useState<string>("");
+  const [newName, setNewName] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,6 +71,42 @@ const EmployeePage = () => {
   const formatCurrency = (value: number | string) => {
     return value.toLocaleString("vi", { style: "currency", currency: "VND" });
   };
+
+  const handleEditClick = (employee: TEmployee) => {
+    setEditingName(employee._id);
+    setNewName(employee.name);
+  };
+
+  const handleSaveClick = async (employeeId: string) => {
+    try {
+      const res = await instance.patch(`/users/${employeeId}`, {
+        name: newName,
+      });
+      if (res.status === 200) {
+        const index = employees.findIndex((item) => item._id === employeeId);
+        setEmployee((prev) => {
+          prev[index].name = newName;
+          return prev;
+        });
+      }
+      setEditingName(""); // Ngừng chế độ chỉnh sửa
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    const res = await instance.delete(`/users/${id}`)
+    if (res.status === 200) {
+      setEmployee((prev) => {
+        return prev.filter(item => item._id !== res.data.data._id)
+      })
+      setRevenue(prev => {
+        return prev && prev.filter(item => item.name !== res.data.data.name)
+      })
+      toast.success("Xóa thành công")
+    } 
+  };
   return (
     <>
       {role !== "boss" ? (
@@ -63,47 +115,48 @@ const EmployeePage = () => {
         </div>
       ) : (
         <>
-          <section className="bg-white py-5 flex items-center mb-5">
-            <ResponsiveContainer
-              width={revenue && revenue?.length > 5 ? "100%" : "50%"}
-              height={400}
+          <section className="bg-white py-5 flex w-full flex-grow items-center mb-5">
+            <div
+              className={revenue && revenue?.length > 2 ? "w-full" : "w-[70%]"}
             >
-              <BarChart
-                width={500}
-                height={300}
-                data={revenue}
-                margin={{
-                  top: 5,
-                  right: 30,
-                  left: 30,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis
-                  tickFormatter={(value) => formatCurrency(value)}
-                  style={{ fontSize: "14px" }}
-                />
-                <Tooltip
-                  formatter={(value) => {
-                    if (Array.isArray(value)) {
-                      return formatCurrency(value[0]);
-                    }
-                    return [formatCurrency(value), "Doanh thu"];
+              <ResponsiveContainer width={"100%"} height={400}>
+                <BarChart
+                  width={500}
+                  height={300}
+                  data={revenue}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 30,
+                    bottom: 5,
                   }}
-                />
-                <Legend />
-                <Bar
-                  dataKey="totalRevenue"
-                  fill="#0089ff"
-                  activeBar={<Rectangle fill="green" stroke="blue" />}
-                  name={"Doanh thu"}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis
+                    tickFormatter={(value) => formatCurrency(value)}
+                    style={{ fontSize: "14px" }}
+                  />
+                  <Tooltip
+                    formatter={(value) => {
+                      if (Array.isArray(value)) {
+                        return formatCurrency(value[0]);
+                      }
+                      return [formatCurrency(value), "Doanh thu"];
+                    }}
+                  />
+                  <Legend />
+                  <Bar
+                    dataKey="totalRevenue"
+                    fill="#0089ff"
+                    activeBar={<Rectangle fill="green" stroke="blue" />}
+                    name={"Doanh thu"}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
 
-            <div className="flex flex-col items-center justify-center w-1/2 px-10">
+            <div className="flex flex-col items-center justify-center w-1/2 px-10 sticky bg-white ">
               <div className="mb-3">
                 <h2 className="text-2xl font-semibold">Doanh thu hôm nay</h2>
                 <h3 className="text-center font-bold text-green-500 text-lg">
@@ -137,31 +190,101 @@ const EmployeePage = () => {
               <ModelAddEmployee />
             </div>
 
-            <div className="grid grid-cols-3 gap-4 p-4">
+            <div className="grid grid-cols-2 gap-4 p-4">
               {employees &&
                 employees.map((employee) => (
-                  <Card
+                  <div
                     key={employee._id}
-                    className="p-4 flex items-center space-x-4 hover:shadow-lg transition-shadow rounded-xl"
+                    className="p-4 flex items-center justify-between space-x-4 hover:shadow-lg transition-shadow rounded-xl border-2"
                   >
-                    <img
-                      src="https://png.pngtree.com/png-vector/20191009/ourmid/pngtree-user-icon-png-image_1796659.jpg"
-                      alt={employee.name}
-                      className="w-16 h-16 rounded-full"
-                    />
-                    <CardContent className="flex flex-col justify-center p-0">
-                      <h2 className="text-lg font-bold">{employee.name}</h2>
-                      <p className="text-sm text-gray-500">Nhân viên</p>
-                      <p className="text-sm font-semibold text-green-500">
-                        {employee.email}
-                      </p>
-                    </CardContent>
-                  </Card>
+                    <div className="flex gap-3">
+                      <img
+                        src="https://png.pngtree.com/png-vector/20191009/ourmid/pngtree-user-icon-png-image_1796659.jpg"
+                        alt={employee.name}
+                        className="w-16 h-16 rounded-full"
+                      />
+                      <div className="flex flex-col justify-center p-0">
+                        {editingName === employee._id ? (
+                          <div>
+                            <input
+                              type="text"
+                              value={newName}
+                              onChange={(e) => setNewName(e.target.value)}
+                              className="border p-1 rounded"
+                            />
+                            <button
+                              onClick={() => handleSaveClick(employee._id)}
+                              className="ml-2 text-blue-500"
+                            >
+                              Lưu
+                            </button>
+                            <button
+                              onClick={() => {
+                                setEditingName("");
+                                setNewName("");
+                              }}
+                              className="ml-2 text-red-500"
+                            >
+                              Hủy
+                            </button>
+                          </div>
+                        ) : (
+                          <div>
+                            <h2 className="text-lg font-bold">
+                              {employee.name}
+                            </h2>
+                          </div>
+                        )}
+                        <p className="text-sm text-gray-500">Nhân viên</p>
+                        <p className="text-sm font-semibold text-green-500">
+                          {employee.email}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col">
+                      <button
+                        onClick={() => handleEditClick(employee)}
+                        className="text-blue-500"
+                      >
+                        <i className="ri-edit-line"></i>
+                      </button>
+
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <button className="text-red-500">
+                            <i className="ri-delete-bin-line"></i>
+                          </button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Bạn có chắc muốn xóa nhân viên này không
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Nếu bạn nhấn đồng ý, nhân viên sẽ bị xóa mãi mãi
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Hủy</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDelete(employee._id)}
+                              className="bg-green-500 hover:bg-blue-500"
+                            >
+                              Đồng ý
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </div>
                 ))}
             </div>
           </section>
         </>
       )}
+
+      <ToastContainer autoClose={1000} />
     </>
   );
 };

@@ -1,11 +1,10 @@
 import { instance } from "@/service";
-import { useEffect, useRef, useState } from "react";
-import Cookies from "js-cookie";
-import { toast, ToastContainer } from "react-toastify";
 import { AxiosError, AxiosResponse } from "axios";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import Cookies from "js-cookie";
+import { useEffect, useRef, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 
-import { ID_DEFAULT } from './../../constants/variable';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,6 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { ID_DEFAULT } from "./../../constants/variable";
 type TAttribute = {
   _id: string;
   name: string;
@@ -151,7 +151,8 @@ const VariantPage = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      if (attributeValue.length === 1) return toast.error("Không thể xóa giá trị mặc định")
+      if (attributeValue.length === 1)
+        return toast.error("Không thể xóa giá trị mặc định");
       await instance.delete(`/attribute_value/${id}`);
 
       toast.success("Xóa thành công");
@@ -168,29 +169,45 @@ const VariantPage = () => {
   const handleAddNewAttribute = async () => {
     try {
       const isDuplicate = attribute.some(
-        (item) => item.name.trim().toLowerCase() === inputValue.trim().toLowerCase()
+        (item) =>
+          item.name.trim().toLowerCase() === inputValue.trim().toLowerCase()
       );
       if (isDuplicate) {
         toast.error("Tên thuộc tính đã tồn tại!");
         return;
       }
-      
-      const res : AxiosResponse = await instance.post("/attributes", {name: inputValue})
-  
-      setAttribute(prev => [...prev, res?.data.data])
-      toast.success("Tạo thành công")
-      setIsAdd(false)
-      setInputValue("")
+
+      const res: AxiosResponse = await instance.post("/attributes", {
+        name: inputValue,
+      });
+
+      setAttribute((prev) => [...prev, res?.data.data]);
+      toast.success("Tạo thành công");
+      setIsAdd(false);
+      setInputValue("");
     } catch (error) {
       console.log(error);
-      toast.error("Có lỗi xảy ra")
+      toast.error("Có lỗi xảy ra");
     }
-  }
-
+  };
+  // if (true) {
+  //   return (
+  //     <>
+  //       <div className="py-10">
+  //         <Skeleton className="w-40 h-10 rounded-xl mb-10" />
+  //         <Skeleton className="w-full h-16 rounded-xl" />
+  //         <Skeleton className="w-full h-16 rounded-xl my-3" />
+  //         <Skeleton className="w-full h-16 rounded-xl" />
+  //       </div>
+  //     </>
+  //   );
+  // }
   return (
     <>
       {role !== "boss" ? (
-        <div className="text-center text-3xl font-bold">Chỉ chủ cửa hàng mới xem được trang này</div>
+        <div className="text-center text-3xl font-bold">
+          Chỉ chủ cửa hàng mới xem được trang này
+        </div>
       ) : (
         <div>
           <button
@@ -252,58 +269,67 @@ const VariantPage = () => {
                         ) : (
                           <p>{item.name}</p>
                         )}
-                        {ID_DEFAULT === item._id ? <div className="flex gap-5">
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <i
-                                className="ri-delete-bin-line cursor-pointer"
-                                onClick={() => setIdDelete(item._id)}
-                              ></i>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  Bạn có chắc muốn xóa không?
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Khi bạn xóa, biến thể sẽ biến mất hoàn toàn!!!
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Hủy</AlertDialogCancel>
-                                <AlertDialogAction
-                                  className="hover:bg-red-500 text-white"
-                                  onClick={() => handleDelete(idDelete)}
-                                >
-                                  Xóa
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent> 
-                          </AlertDialog>
-                          <i
-                            className="ri-edit-line cursor-pointer"
-                            onClick={() => handleEdit(item)}
-                          ></i>
-                        </div> : <></>}
+                        {ID_DEFAULT === item._id ? (
+                          <div className="flex gap-5">
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <i
+                                  className="ri-delete-bin-line cursor-pointer"
+                                  onClick={() => setIdDelete(item._id)}
+                                ></i>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Bạn có chắc muốn xóa không?
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Khi bạn xóa, biến thể sẽ biến mất hoàn
+                                    toàn!!!
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Hủy</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    className="hover:bg-red-500 text-white"
+                                    onClick={() => handleDelete(idDelete)}
+                                  >
+                                    Xóa
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                            <i
+                              className="ri-edit-line cursor-pointer"
+                              onClick={() => handleEdit(item)}
+                            ></i>
+                          </div>
+                        ) : (
+                          <></>
+                        )}
                       </div>
-                    ))} 
+                    ))}
 
-                    {ID_DEFAULT !== item._id ? <div className="flex items-center gap-2 mb-5">
-                      <input
-                        value={newName}
-                        onChange={(e) => setNewName(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") handleAddNew();
-                        }}
-                        placeholder="Thêm giá trị mới"
-                        className="border rounded px-2 py-1 flex-1"
-                      />
-                      <i
-                        className="ri-add-line text-2xl cursor-pointer text-green-500"
-                        onClick={handleAddNew}
-                      ></i>
-                    </div> : <></>}
-                  </motion.div> 
+                    {ID_DEFAULT !== item._id ? (
+                      <div className="flex items-center gap-2 mb-5">
+                        <input
+                          value={newName}
+                          onChange={(e) => setNewName(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") handleAddNew();
+                          }}
+                          placeholder="Thêm giá trị mới"
+                          className="border rounded px-2 py-1 flex-1"
+                        />
+                        <i
+                          className="ri-add-line text-2xl cursor-pointer text-green-500"
+                          onClick={handleAddNew}
+                        ></i>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                  </motion.div>
                 )}
               </AnimatePresence>
             </section>
@@ -325,7 +351,7 @@ const VariantPage = () => {
             onChange={handleInputChange}
             className="pl-2 text-xl font-bold outline rounded-md py-2"
           />
-          {inputValue !=="" ? (
+          {inputValue !== "" ? (
             <i
               className="ri-add-line text-2xl cursor-pointer text-green-500"
               onClick={handleAddNewAttribute}
@@ -334,8 +360,8 @@ const VariantPage = () => {
             <i
               className="ri-close-line text-2xl cursor-pointer text-red-500"
               onClick={() => {
-                setIsAdd(false)
-                setInputValue("")
+                setIsAdd(false);
+                setInputValue("");
               }}
             ></i>
           )}

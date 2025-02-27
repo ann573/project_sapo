@@ -16,6 +16,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosResponse } from "axios";
+import { useNavigate } from "react-router-dom";
 import ButtonPage from "../../components/ButtonPage";
 import {
   fetchCustomerById,
@@ -25,14 +28,12 @@ import {
 } from "../../features/customers/customerAction";
 import useDebounce from "../../hooks/useDebounce";
 import { ICustomer } from "../../interface/ICustom";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { customerSchema } from "./../../schema/customer";
-import { AxiosResponse } from "axios";
 import { instance } from "../../service";
-import { useNavigate } from "react-router-dom";
+import TableSkeleton from './../../components/skeleton/TableSkeleton';
+import { customerSchema } from "./../../schema/customer";
 
 const CustomerPage = () => {
-  const { customer, customers, error } = useSelector(
+  const { customer, customers, error, loading } = useSelector(
     (state: RootState) => state.customers
   );
   const dispatch = useDispatch<AppDispatch>();
@@ -54,7 +55,7 @@ const CustomerPage = () => {
   const [idDelete, setIdDelete] = useState<string>("");
 
   const [icon, setIcon] = useState<JSX.Element>(
-    <i className="ri-menu-line"></i>
+    <i className="ri-filter-line"></i>
   );
 
   const limit = 10;
@@ -124,7 +125,7 @@ const CustomerPage = () => {
     const nextSort = (sort + 1) % 3;
     switch (nextSort) {
       case 0:
-        setIcon(<i className="ri-menu-line"></i>);
+        setIcon(<i className="ri-filter-line"></i>);
         break;
       case 1:
         setIcon(<i className="ri-sort-asc"></i>);
@@ -133,7 +134,7 @@ const CustomerPage = () => {
         setIcon(<i className="ri-sort-desc"></i>);
         break;
       default:
-        setIcon(<i className="ri-menu-line"></i>);
+        setIcon(<i className="ri-filter-line"></i>);
         break;
     }
   };
@@ -143,6 +144,13 @@ const CustomerPage = () => {
     nav(`/admin/customer/${id}`);
   };
 
+  if (loading) {
+    return (
+      <>
+        <TableSkeleton/>
+      </>
+    );
+  }
   return (
     <>
       <AlertDialog>

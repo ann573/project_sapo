@@ -1,20 +1,22 @@
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../store/store";
+import { instance } from "@/service";
+import { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast, ToastContainer } from "react-toastify";
+import { AppDispatch, RootState } from "../../../store/store";
 import {
   fetchProducts,
   removeOneProduct,
 } from "../../features/products/productsAction";
-import PopupProduct from "../../components/PopupProduct";
-import { toast, ToastContainer } from "react-toastify";
-import useDebounce from "../../hooks/useDebounce"; 
+import useDebounce from "../../hooks/useDebounce";
 import ButtonPage from "./../../components/ButtonPage";
+import { Link } from "react-router-dom";
 
 const ProductPage = () => {
   const { products, error } = useSelector((state: RootState) => state.products);
-  console.log(products);
   const [page, setPage] = useState<number>(1);
   const limit = 10;
+  const [total, setTotal] = useState<number>(0);
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [id, setId] = useState<string>("");
@@ -44,6 +46,15 @@ const ProductPage = () => {
   }, [dispatch, page, limit, debouncedSearchQuery]);
 
   useEffect(() => {
+    (async () => {
+      const res: AxiosResponse = await instance.get("/products/total");
+      setTotal(() => {
+        return Math.ceil(res.data.data / limit) || 1;
+      });
+    })();
+  }, []);
+
+  useEffect(() => {
     if (products.length === 0 && page > 1) {
       setPage(1);
     }
@@ -61,13 +72,8 @@ const ProductPage = () => {
         <i className="ri-search-line absolute left-2 top-1/4"></i>
       </div>
 
-      <button
-        className="mt-3 bg-green-500 text-white py-2 px-3 rounded-md font-semibold"
-        onClick={() => {
-          setIsOpen(true);
-        }}
-      >
-        Thêm sản phẩm
+      <button className="mt-3 bg-green-500 text-white py-2 px-3 rounded-md font-semibold">
+        <Link to={"/admin/product/add_and_update"}>Thêm sản phẩm</Link>
       </button>
 
       <div className="my-5">
@@ -77,60 +83,90 @@ const ProductPage = () => {
               <th className="border border-slate-600">STT</th>
               <th className="border border-slate-600">Tên sản phẩm</th>
               <th className="border border-slate-600">Mã sản phẩm</th>
+              <th className="border border-slate-600">Phân loại</th>
               <th className="border border-slate-600">Tồn kho</th>
               <th className="border border-slate-600">Giá</th>
               <th className="border border-slate-600">Hoạt động</th>
             </tr>
           </thead>
           <tbody>
-            {/* {products.map((item, index) => {
-              return (
-                <tr key={item._id}>
-                  <td className="border border-slate-600 text-center">
-                    {(page - 1) * limit + (index + 1)}
+            {products.map((item, index) =>
+              item.variants.map((variant, variantIndex) => (
+                <tr key={variant._id}>
+                  {/* Chỉ hiển thị STT, tên sản phẩm và mã sản phẩm cho biến thể đầu tiên */}
+                  {variantIndex === 0 && (
+                    <>
+                      <td
+                        className="border border-slate-600 p-2 text-center"
+                        rowSpan={item.variants.length}
+                      >
+                        {(page - 1) * limit + (index + 1)}
+                      </td>
+                      <td
+                        className="border border-slate-600 p-2 text-center"
+                        rowSpan={item.variants.length}
+                      >
+                        {item.name}
+                      </td>
+                      <td
+                        className="border border-slate-600 p-2 text-center"
+                        rowSpan={item.variants.length}
+                      >
+                        {item.sort_title}
+                      </td>
+                    </>
+                  )}
+
+                  {/* Biến thể của sản phẩm */}
+                  <td className="border border-slate-600 p-2 text-center">
+                    {variant.attribute?.name}
                   </td>
-                  <td className="border border-slate-600 text-center">
-                    {item.name}
+                  <td className="border border-slate-600 p-2 text-center">
+                    {variant.stock}
                   </td>
-                  <td className="border border-slate-600 text-center">
-                    {item.sort_title}
-                  </td>
-                  <td className="border border-slate-600 text-center">
-                    {item.quantity}
-                  </td>
-                  <td className="border border-slate-600 text-center">
-                    {item.price.toLocaleString("vi", {
+                  {/* Giá của biến thể */}
+                  <td className="border border-slate-600 p-2 text-center">
+                    {variant.price?.toLocaleString("vi", {
                       style: "currency",
                       currency: "VND",
                     })}
                   </td>
-                  <td className="border border-slate-600 text-center py-2">
-                    <button
-                      className="bg-red-500 mr-3 p-1 rounded-md"
-                      onClick={() => handleDelete(item._id)}
+
+                  {/* Hành động (Xóa, Cập nhật) */}
+                  {variantIndex === 0 && (
+                    <td
+                      className="border border-slate-600 p-2 text-center "
+                      rowSpan={item.variants.length}
                     >
-                      Xóa
-                    </button>
-                    <button
-                      className="bg-yellow-200 p-1 rounded-md"
-                      onClick={() => {
-                        setIsOpen(true);
-                        setId(item._id);
-                      }}
-                    >
-                      Cập nhật
-                    </button>
-                  </td>
+                      <button
+                        className="bg-red-500 text-white p-1 rounded-md mr-1"
+                        onClick={() => handleDelete(item._id)}
+                      >
+                        Xóa
+                      </button>
+
+                      <button
+                        className="bg-yellow-200 p-1 rounded-md"
+                        onClick={() => {
+                          setIsOpen(true);
+                          setId(item._id);
+                        }}
+                      >
+                        <Link to={`/admin/product/add_and_update/${item._id}`}>
+                          Cập nhật
+                        </Link>
+                      </button>
+                    </td>
+                  )}
                 </tr>
-              );
-            })} */}
+              ))
+            )}
           </tbody>
         </table>
       </div>
 
-      <ButtonPage setPage={setPage} page={page} />
+      <ButtonPage setPage={setPage} page={page} total={total} />
 
-      {isOpen && <PopupProduct setIsOpen={setIsOpen} id={id} setId={setId} />}
       <ToastContainer />
     </section>
   );

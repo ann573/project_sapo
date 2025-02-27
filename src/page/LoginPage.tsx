@@ -1,15 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { ToastContainer, toast } from "react-toastify";
 import { AxiosError, AxiosResponse } from "axios";
-import { loginSchema } from "./../schema/user";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { loginAccount } from "./../service/user";
 import Cookies from "js-cookie";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import { loginSchema } from "./../schema/user";
+import { loginAccount } from "./../service/user";
 // import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
-import { IResponse } from "../interface/IResponse";
 import IErrorResponse from "../interface/IErrorResponse";
+import { IResponse } from "../interface/IResponse";
+import ModelForgotPass from "@/components/ModelForgotPass";
 
 type Inputs = {
   email: string;
@@ -18,6 +19,7 @@ type Inputs = {
 
 const LoginPage = () => {
   const [show, setShow] = useState<boolean>(false);
+
   const nav = useNavigate();
   const {
     register,
@@ -26,30 +28,6 @@ const LoginPage = () => {
   } = useForm<Inputs>({
     resolver: zodResolver(loginSchema),
   });
-
-  // const handleGoogleLoginSuccess = (credentialResponse: CredentialResponse) => {
-  //   const googleToken = credentialResponse.credential;
-  //   if (googleToken) {
-  //     fetch(
-  //       "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=" + googleToken
-  //     )
-  //       .then((response) => response.json())
-  //       .then((data) => {
-  //         console.log(data);
-  //         Cookies.set("user", data.given_name);
-  //         Cookies.set("accessToken", googleToken);
-
-  //         nav("/");
-  //       })
-  //       .catch((error) => {
-  //         toast.error("Lỗi khi lấy thông tin người dùng từ Google:", error);
-  //       });
-  //   }
-  // };
-
-  // const handleGoogleLoginError = () => {
-  //   toast.error("Google Login Failed");
-  // };
 
   const submitForm: SubmitHandler<Inputs> = async (data) => {
     try {
@@ -123,40 +101,16 @@ const LoginPage = () => {
               </p>
             )}
           </div>
-
-          {/* <p className="mb-10 ml-4">
-            Bạn chưa có tài khoản?{" "}
-            <Link to="/register" className="italic hover:underline">
-              Đăng ký ngay
-            </Link>
-          </p> */}
+          
 
           <div className="flex flex-col items-center justify-center gap-5 mb-3">
             <button className="bg-custom-gradient py-4 px-20 rounded-full text-white text-2xl font-semibold">
               Đăng nhập
             </button>
-            {/* <p className="text-textColor">Hoặc đăng nhập với</p> */}
           </div>
-
-          {/* <div className="flex justify-center gap-5">
-            <div className="w-2/6 cursor-pointer">
-              <img
-                src="https://sapo.dktcdn.net/sso-service/images/svg_sociallogin_fb_new.svg"
-                alt="facebook"
-                className="w-full"
-              />
-            </div>
-
-            <div className="">
-              <GoogleLogin
-                onSuccess={handleGoogleLoginSuccess}
-                onError={handleGoogleLoginError}
-                theme="outline"
-                type="standard"
-              />
-            </div>
-          </div> */}
         </form>
+
+        <ModelForgotPass />
       </section>
 
       <ToastContainer />
