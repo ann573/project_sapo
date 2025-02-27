@@ -26,6 +26,7 @@ import {
   fetchAttributeById,
 } from "./../../features/variants/variantAction";
 import { productSchema } from "./../../schema/product";
+import { IProduct } from "./../../interface/IProduct";
 
 type Inputs = {
   name: string;
@@ -45,8 +46,9 @@ const AddAndUpdateProduct = () => {
   const { attributesValue } = useSelector(
     (state: RootState) => state.attributesValue
   );
-  const { product } = useSelector((state: RootState) => state.products);
+  // const { product } = useSelector((state: RootState) => state.products);
 
+  const [products, setProducts] = useState<IProduct>({});
   const dispatch = useDispatch<AppDispatch>();
 
   const [attributeValues, setAttributeValues] = useState<any[]>([
@@ -75,19 +77,21 @@ const AddAndUpdateProduct = () => {
   useEffect(() => {
     if (id) {
       (async () => {
-        await dispatch(fetchProductById(id));
-
-        if (product) {
-          setIdAttribute(product?.variants[0].attribute.attributeId);
+        const res = await instance.get(`/products/single/${id}`);
+        setProducts(res.data.data);
+        console.log(res.data.data);
+        if (res.data.data) {
+          setIdAttribute(res.data.data?.variants[0].attribute.attributeId);
           setAttributeValues((prev) => {
             prev.length = 0;
-            product?.variants.forEach((item, index) => {
+            res.data.data?.variants.forEach((item, index) => {
               const dataBody = {
                 id: item.attribute._id,
                 price: item.price,
                 stock: item.stock,
                 name: item.attribute.name,
               };
+              console.log(dataBody);
               setValue(
                 `attributeValues.${index}.attribute`,
                 item.attribute._id || ""
@@ -109,28 +113,28 @@ const AddAndUpdateProduct = () => {
           await dispatch(fetchAttributeById(idAttribute));
       })();
     }
-  }, [dispatch, id]);
+  }, [dispatch, id, idAttribute, setValue]);
 
   useEffect(() => {
     if (id) {
       setValue("attributes", idAttribute, { shouldValidate: true });
-      if (product && product.name)
-        setValue("name", product.name, { shouldValidate: true });
-      if (product && product.sort_title)
-        setValue("sort_title", product.sort_title, { shouldValidate: true });
+      if (products && products.name)
+        setValue("name", products.name, { shouldValidate: true });
+      if (products && products.sort_title)
+        setValue("sort_title", products.sort_title, { shouldValidate: true });
     }
-  }, [idAttribute, setValue, product, id]);
+  }, [idAttribute, setValue, products, id]);
 
-  // useEffect(() => {
-  //   // Đồng bộ dữ liệu từ API vào form
-  //   if (attributeValues.length > 0) {
-  //     attributeValues.forEach((item, index) => {
-  //       setValue(`attributeValues.${index}.attribute`, item.id || "");
-  //       setValue(`attributeValues.${index}.price`, item.price || "");
-  //       setValue(`attributeValues.${index}.stock`, item.stock || "");
-  //     });
-  //   }
-  // }, [attributeValues, setValue]);
+  useEffect(() => {
+    // Đồng bộ dữ liệu từ API vào form
+    if (attributeValues.length > 0) {
+      attributeValues.forEach((item, index) => {
+        setValue(`attributeValues.${index}.attribute`, item.id || "");
+        setValue(`attributeValues.${index}.price`, item.price || "");
+        setValue(`attributeValues.${index}.stock`, item.stock || "");
+      });
+    }
+  }, [attributeValues, setValue]);
 
   const handleValueChange = async (value: string) => {
     await dispatch(fetchSingleAttributeValue(value));
@@ -303,11 +307,13 @@ const AddAndUpdateProduct = () => {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            {attributesValue.map((attr) => (
-                              <SelectItem key={attr._id} value={attr._id}>
-                                {attr.name}
-                              </SelectItem>
-                            ))}
+                            {attributesValue.map((attr) => {
+                              return (
+                                <SelectItem key={attr._id} value={attr._id}>
+                                  {attr.name}
+                                </SelectItem>
+                              );
+                            })}
                           </SelectGroup>
                         </SelectContent>
                       </Select>
