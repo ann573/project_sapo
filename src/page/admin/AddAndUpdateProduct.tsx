@@ -12,7 +12,7 @@ import {
 import { fetchSingleAttributeValue } from "@/features/attributeValue/attributeAction";
 import { instance } from "@/service";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,7 +25,10 @@ import {
   fetchAttributeById,
 } from "./../../features/variants/variantAction";
 import { IProduct } from "./../../interface/IProduct";
-import { productSchema } from "./../../schema/product";
+import {
+  productSchema,
+  productSchemaUpdate,
+} from "../../service/schema/product";
 
 type Inputs = {
   name: string;
@@ -34,8 +37,8 @@ type Inputs = {
   attributeValues: {
     idProduct: string;
     attribute: string;
-    price: string;
-    stock: string;
+    price: number;
+    stock: number;
   }[];
 };
 
@@ -73,7 +76,6 @@ const AddAndUpdateProduct = () => {
   const [attributeValues, setAttributeValues] = useState<any[]>([
     { id: "", price: "", stock: "", name: "" },
   ]);
-
   const [idAttribute, setIdAttribute] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -85,10 +87,10 @@ const AddAndUpdateProduct = () => {
     control,
     setValue,
   } = useForm<Inputs>({
-    resolver: zodResolver(productSchema),
+    resolver: zodResolver(id ? productSchemaUpdate : productSchema),
   });
-
   const nav = useNavigate();
+
   useEffect(() => {
     dispatch(fetchAttribute());
   }, [dispatch]);
@@ -124,19 +126,12 @@ const AddAndUpdateProduct = () => {
                   stock: item.stock,
                   name: item.attribute.name,
                 };
-                console.log(dataBody);
                 setValue(
                   `attributeValues.${index}.attribute`,
                   item.attribute._id || ""
                 );
-                setValue(
-                  `attributeValues.${index}.price`,
-                  String(item.price) || ""
-                );
-                setValue(
-                  `attributeValues.${index}.stock`,
-                  String(item.stock) || ""
-                );
+                setValue(`attributeValues.${index}.price`, item.price || 0);
+                setValue(`attributeValues.${index}.stock`, item.stock || 0);
                 prev.push(dataBody);
               }
             );
@@ -195,10 +190,9 @@ const AddAndUpdateProduct = () => {
   };
 
   const handleAddAttributeValue = () => {
-    setAttributeValues((prev) => [
-      ...prev,
-      { id: "", price: "", stock: "", name: "" },
-    ]);
+    setAttributeValues((prev) => {
+      return [...prev, { id: "", price: "", stock: "", name: "" }];
+    });
   };
 
   const handleRemoveAttributeValue = (index: number) => {
@@ -212,33 +206,51 @@ const AddAndUpdateProduct = () => {
     );
     if (hasDuplicate) {
       toast.error("Không được chọn 2 thuộc tính trùng nhau");
+      return
     }
     try {
       setLoading(true);
       const { name, sort_title } = dataBody;
-      const dataProduct = { name, sort_title };
-      const res: AxiosResponse = await instance.post("/products", dataProduct);
-      if (res.status === 201) {
-        dataBody.attributeValues.forEach((item) => {
-          item.idProduct = res.data.data._id;
-        });
-      }
-      const resVariant: AxiosResponse = await instance.post(
-        "/variants",
-        dataBody.attributeValues
-      );
-      if (resVariant.status === 201) {
-        setLoading(false);
-        nav("/admin/product");
-        reset();
+      const dataProduct = { name, sort_title: sort_title.toUpperCase() };
+      if (!id) {
+        const res: AxiosResponse = await instance.post(
+          "/products",
+          dataProduct
+        );
+        if (res.status === 201) {
+          dataBody.attributeValues.forEach((item) => {
+            item.idProduct = res.data.data._id;
+          });
+        }
+        const resVariant: AxiosResponse = await instance.post(
+          "/variants",
+          dataBody.attributeValues
+        );
+        if (resVariant.status === 201) {
+          setLoading(false);
+          nav("/admin/product");
+          reset();
+        }
+      } else {
+        await instance.patch(`/products/${id}`, dataProduct);
+        const resVariant: AxiosResponse = await instance.patch(
+          `/variants/update/${id}`,
+          dataBody.attributeValues
+        );
+        if (resVariant.status === 201) {
+          setLoading(false);
+          nav("/admin/product");
+        }
       }
     } catch (error) {
       console.log(error);
       setLoading(false);
+      if (error instanceof AxiosError && error.response) {
+        return toast.error(error.response.data.error);
+      }
       return toast.error("Có lỗi xảy ra");
     }
   };
-
   return (
     <>
       <section className="bg-white py-5 px-10">
@@ -322,7 +334,7 @@ const AddAndUpdateProduct = () => {
                   render={({ field }) => (
                     <div className="flex flex-col basis-[30%]">
                       <Select
-                        value={field.value || ""} // Khi thêm mới sẽ là chuỗi rỗng
+                        value={field.value ?? ""} // Khi thêm mới sẽ là chuỗi rỗng
                         onValueChange={(value) => {
                           field.onChange(value);
                           handleAttributeValueChange(index, "id", value);
@@ -361,17 +373,23 @@ const AddAndUpdateProduct = () => {
                 <Controller
                   name={`attributeValues.${index}.price`}
                   control={control}
-                  defaultValue={item.price || ""} // Giá trị mặc định khi cập nhật
+                  defaultValue={item.price ?? ""} // Giá trị mặc định khi cập nhật
                   render={({ field }) => (
                     <div>
                       <Input
                         type="number"
                         placeholder="Giá"
                         {...field}
-                        value={field.value || ""} // Hỗ trợ cả thêm mới và cập nhật
+                        value={field.value ?? ""} 
+                        onChange={(e) => {
+                          handleAttributeValueChange(index, "price", e.target.value);
+                        }}
                       />
                       <p className="text-red-500 italic ml-1">
-                        {errors?.attributeValues?.[index]?.price?.message}
+                        {errors?.attributeValues?.[index]?.price?.message ===
+                        "Expected string, received number"
+                          ? "Hãy nhập số"
+                          : errors?.attributeValues?.[index]?.price?.message}
                       </p>
                     </div>
                   )}
@@ -381,17 +399,23 @@ const AddAndUpdateProduct = () => {
                 <Controller
                   name={`attributeValues.${index}.stock`}
                   control={control}
-                  defaultValue={item.stock || ""} // Giá trị mặc định khi cập nhật
+                  defaultValue={item.stock ?? ""} // Giá trị mặc định khi cập nhật
                   render={({ field }) => (
                     <div>
                       <Input
                         type="number"
                         placeholder="Tồn kho"
                         {...field}
-                        value={field.value || ""} // Hỗ trợ cả thêm mới và cập nhật
+                        onChange={(e) => {
+                          handleAttributeValueChange(index, "stock", e.target.value);
+                        }}
+                        value={field.value ?? ""} // Hỗ trợ cả thêm mới và cập nhật
                       />
                       <p className="text-red-500 italic ml-1">
-                        {errors?.attributeValues?.[index]?.stock?.message}
+                        {errors?.attributeValues?.[index]?.stock?.message ===
+                        "Expected string, received number"
+                          ? "Hãy nhập số"
+                          : errors?.attributeValues?.[index]?.price?.message}
                       </p>
                     </div>
                   )}
@@ -410,7 +434,11 @@ const AddAndUpdateProduct = () => {
             <Button>
               <Link to="/admin/product">Quay lại</Link>
             </Button>
-            <Button type="submit" className="bg-green-500 hover:bg-green-700">
+            <Button
+              type="submit"
+              className="bg-green-500 hover:bg-green-700"
+              // disabled={Object.keys(errors).length !== 0 ? true : false}
+            >
               {id ? "Cập nhật sản phẩm" : "Thêm mới sản phẩm"}
             </Button>
           </div>

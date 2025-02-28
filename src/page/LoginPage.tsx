@@ -5,7 +5,7 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import { loginSchema } from "./../schema/user";
+import { loginSchema } from "../service/schema/user";
 import { loginAccount } from "./../service/user";
 // import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import IErrorResponse from "../interface/IErrorResponse";
@@ -101,7 +101,6 @@ const LoginPage = () => {
               </p>
             )}
           </div>
-          
 
           <div className="flex flex-col items-center justify-center gap-5 mb-3">
             <button className="bg-custom-gradient py-4 px-20 rounded-full text-white text-2xl font-semibold">

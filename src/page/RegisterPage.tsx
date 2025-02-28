@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
-import { registerChema } from "./../schema/user";
+import { registerChema } from "../service/schema/user";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { registerAccount } from "../service/user";
@@ -40,7 +40,6 @@ const RegisterPage = () => {
         toast.error("Email đã tồn tại");
       }
     }
-
   };
   return (
     <>

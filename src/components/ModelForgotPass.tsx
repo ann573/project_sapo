@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { API_ENDPOINT } from "@/constants/variable";
+import { API_ENDPOINT } from "@/components/constants/variable";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -71,15 +71,18 @@ const ModelForgotPass = () => {
   const onSubmitOTP = async (data: TFormOTP) => {
     try {
       console.log(data);
-      const res: AxiosResponse = await axios.post("/users/verify-otp", {
-        email: userEmail,
-        otp: data.otp,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
+      const res: AxiosResponse = await axios.post(
+        "/users/verify-otp",
+        {
+          email: userEmail,
+          otp: data.otp,
         },
-      });
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       if (res.status === 200) {
         toast.success("Xác thực thành công!");
         setIsOtpOpen(false);

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { employeeSchema } from "@/schema/employee";
+import { employeeSchema } from "@/service/schema/employee";
 import { instance } from "@/service"; // Gọi API
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosResponse } from "axios";
@@ -45,12 +45,11 @@ const ModelAddEmployee = () => {
     password: string;
     otp: string;
   };
-  
 
   const handleRegister = async (data: TFormData) => {
     try {
       setLoading(true);
-      const res:AxiosResponse = await instance.post("/users/register", data);
+      const res: AxiosResponse = await instance.post("/users/register", data);
       if (res.status === 200) {
         toast.success("Vui lòng kiểm tra email để xác thực tài khoản.");
         reset();
@@ -61,7 +60,7 @@ const ModelAddEmployee = () => {
       );
     } finally {
       setLoading(false);
-      setIsOpen(false)
+      setIsOpen(false);
     }
   };
   return (
@@ -126,8 +125,6 @@ const ModelAddEmployee = () => {
             </div>
           )}
         </DialogContent>
-
-        
       </Dialog>
       {/*  */}
     </>

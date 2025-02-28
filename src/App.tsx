@@ -14,6 +14,7 @@ import EmployeePage from "./page/admin/EmployeePage";
 import VariantPage from "./page/admin/VariantPage";
 import VerifyPage from "./page/VerifyPage";
 import AddAndUpdateProduct from "./page/admin/AddAndUpdateProduct";
+import NotFoundPage from "./page/NotFoundPage";
 
 const App = () => {
   const location = useLocation();
@@ -72,6 +73,7 @@ const App = () => {
         <Route path="/verify-email/:token" element={<VerifyPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
   );

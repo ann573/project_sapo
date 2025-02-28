@@ -1,13 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { customerSchema } from './../schema/customer';
-import { createCustomer, searchCustomer } from './../service/customer';
-import { toast, ToastContainer } from 'react-toastify';
+import { customerSchema } from "../service/schema/customer";
+import { createCustomer, searchCustomer } from "./../service/customer";
+import { toast, ToastContainer } from "react-toastify";
 import { ICustomer } from "../interface/ICustom";
 
 interface PopupCustomerProps {
   setIsOpen: (value: boolean) => void;
-  setCustomerSelect: (customer: ICustomer) => void
+  setCustomerSelect: (customer: ICustomer) => void;
 }
 
 type FormValues = {
@@ -15,28 +15,33 @@ type FormValues = {
   telephone: string;
 };
 
-
-const PopupCustomer: React.FC<PopupCustomerProps> = ({ setIsOpen , setCustomerSelect }) => {
+const PopupCustomer: React.FC<PopupCustomerProps> = ({
+  setIsOpen,
+  setCustomerSelect,
+}) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(customerSchema)
+    resolver: zodResolver(customerSchema),
   });
 
-  const submitForm = async (value : FormValues) => {
+  const submitForm = async (value: FormValues) => {
     const formattedTel = value.telephone.padStart(10, "0");
-    const searchResult = await searchCustomer(formattedTel)
+    const searchResult = await searchCustomer(formattedTel);
     if (searchResult.length !== 0) {
-      toast.error("Số điện thoại đã có ", {autoClose: 2000, pauseOnHover: false})
-    }else {
+      toast.error("Số điện thoại đã có ", {
+        autoClose: 2000,
+        pauseOnHover: false,
+      });
+    } else {
       const data = await createCustomer({ ...value, telephone: formattedTel });
-      setCustomerSelect(data)
-      setIsOpen(false)
+      setCustomerSelect(data);
+      setIsOpen(false);
     }
   };
-  return (  
+  return (
     <>
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
         <div className="bg-white w-96 p-6 rounded-lg shadow-lg">
@@ -70,20 +75,20 @@ const PopupCustomer: React.FC<PopupCustomerProps> = ({ setIsOpen , setCustomerSe
                 {...register("telephone")}
               />
               {errors.telephone && (
-                <p className="text-red-500 italic">{errors.telephone.message}</p>
+                <p className="text-red-500 italic">
+                  {errors.telephone.message}
+                </p>
               )}
             </div>
             <div className="flex justify-end">
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
+              <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                 Thêm khách hàng
               </button>
             </div>
           </form>
         </div>
       </div>
-        <ToastContainer />
+      <ToastContainer />
     </>
   );
 };

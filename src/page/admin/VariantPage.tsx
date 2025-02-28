@@ -16,7 +16,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { ID_DEFAULT } from "./../../constants/variable";
+import { ID_DEFAULT,ID_DEFAULT_ATTRIBUTE } from "../../components/constants/variable";
+
 type TAttribute = {
   _id: string;
   name: string;
@@ -105,7 +106,7 @@ const VariantPage = () => {
     }
 
     try {
-      await instance.put(`/attribute_value/${id}`, { name: editName });
+      await instance.patch(`/attribute_value/${id}`, { name: editName });
       setAttributeValue((prev) =>
         prev.map((item) =>
           item._id === id ? { ...item, name: editName } : item
@@ -217,6 +218,7 @@ const VariantPage = () => {
             Thêm một biến thể mới
           </button>
           {attribute.map((item) => (
+            
             <section key={item._id}>
               <div
                 className={`bg-white py-5 px-10 items-center ${
@@ -269,7 +271,7 @@ const VariantPage = () => {
                         ) : (
                           <p>{item.name}</p>
                         )}
-                        {ID_DEFAULT === item._id ? (
+                        {ID_DEFAULT != item._id ? (
                           <div className="flex gap-5">
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
@@ -310,7 +312,7 @@ const VariantPage = () => {
                       </div>
                     ))}
 
-                    {ID_DEFAULT !== item._id ? (
+                    {ID_DEFAULT_ATTRIBUTE != item._id ? (
                       <div className="flex items-center gap-2 mb-5">
                         <input
                           value={newName}

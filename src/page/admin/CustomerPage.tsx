@@ -29,8 +29,8 @@ import {
 import useDebounce from "../../hooks/useDebounce";
 import { ICustomer } from "../../interface/ICustom";
 import { instance } from "../../service";
-import TableSkeleton from './../../components/skeleton/TableSkeleton';
-import { customerSchema } from "./../../schema/customer";
+import TableSkeleton from "./../../components/skeleton/TableSkeleton";
+import { customerSchema } from "../../service/schema/customer";
 
 const CustomerPage = () => {
   const { customer, customers, error, loading } = useSelector(
@@ -147,7 +147,7 @@ const CustomerPage = () => {
   if (loading) {
     return (
       <>
-        <TableSkeleton/>
+        <TableSkeleton />
       </>
     );
   }
@@ -160,6 +160,7 @@ const CustomerPage = () => {
               type="text"
               className="w-full border px-10 py-2 rounded-xl focus:outline-none"
               placeholder="Tìm kiếm khách hàng theo số điện thoại...."
+              value={searchQuery}
               onChange={handleSearchChange}
             />
             <i className="ri-search-line absolute left-2 top-1/4"></i>
