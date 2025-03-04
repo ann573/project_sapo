@@ -57,7 +57,7 @@ export default {
   			'screen-minus-pay': 'calc(100vh - 56px)'
   		},
   		screens: {
-  			'2xl': '2000px'
+  			'2xl': '1700px'
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
