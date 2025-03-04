@@ -13,11 +13,14 @@ import useDebounce from "../../hooks/useDebounce";
 import ButtonPage from "./../../components/ButtonPage";
 
 import TableSkeleton from "./../../components/skeleton/TableSkeleton";
+import Cookies from "js-cookie";
 
 const ProductPage = () => {
   const { products, error, loading } = useSelector(
     (state: RootState) => state.products
   );
+  const role = Cookies.get("role");
+
   const [page, setPage] = useState<number>(1);
   const limit = 10;
   const [total, setTotal] = useState<number>(0);
@@ -32,9 +35,8 @@ const ProductPage = () => {
       totalSold: 100,
     },
   ]);
-  console.log(topProduct);
+
   const [searchQuery, setSearchQuery] = useState<string>("");
-  // const [id, setId] = useState<string>("");
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -92,9 +94,11 @@ const ProductPage = () => {
           <i className="ri-search-line absolute left-2 top-1/4"></i>
         </div>
 
-        <button className="mt-3 bg-green-500 text-white py-2 px-3 rounded-md font-semibold">
-          <Link to={"/admin/product/add_and_update"}>Thêm sản phẩm</Link>
-        </button>
+        {role === "boss" && (
+          <button className="mt-3 bg-green-500 text-white py-2 px-3 rounded-md font-semibold">
+            <Link to={"/admin/product/add_and_update"}>Thêm sản phẩm</Link>
+          </button>
+        )}
 
         <div className="my-5">
           <table className="w-full border-collapse border border-slate-500 min-h-[516px]">
@@ -106,7 +110,9 @@ const ProductPage = () => {
                 <th className="border border-slate-600">Phân loại</th>
                 <th className="border border-slate-600">Tồn kho</th>
                 <th className="border border-slate-600">Giá</th>
-                <th className="border border-slate-600">Hoạt động</th>
+                {role === "boss" && (
+                  <th className="border border-slate-600">Hoạt động</th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -153,7 +159,7 @@ const ProductPage = () => {
                     </td>
 
                     {/* Hành động (Xóa, Cập nhật) */}
-                    {variantIndex === 0 && (
+                    {variantIndex === 0 && role==='boss' && (
                       <td
                         className="border border-slate-600 p-2 text-center "
                         rowSpan={item.variants.length}
@@ -191,7 +197,9 @@ const ProductPage = () => {
 
       <section className="bg-white mt-5">
         <div className="p-6">
-          <h2 className="text-2xl font-bold mb-4">Top Sản Phẩm Bán Chạy Trong Tuần</h2>
+          <h2 className="text-2xl font-bold mb-4">
+            Top Sản Phẩm Bán Chạy Trong Tuần
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {topProduct.map((product) => (
               <div
@@ -203,7 +211,6 @@ const ProductPage = () => {
                   Đã bán: <span className="font-bold">{product.totalSold}</span>{" "}
                   sản phẩm
                 </div>
-
               </div>
             ))}
           </div>

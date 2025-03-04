@@ -16,7 +16,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { ID_DEFAULT,ID_DEFAULT_ATTRIBUTE } from "../../components/constants/variable";
+import {
+  ID_DEFAULT,
+  ID_DEFAULT_ATTRIBUTE,
+} from "../../components/constants/variable";
 
 type TAttribute = {
   _id: string;
@@ -191,6 +194,20 @@ const VariantPage = () => {
       toast.error("Có lỗi xảy ra");
     }
   };
+
+  const handleDeleteVariant = async (id: string) => {
+    try {
+      const res: AxiosResponse = await instance.delete(`/attributes/${id}`);
+
+      if (res.status === 200) {
+        toast.success("Xóa thành công")
+      }
+    } catch (error) {
+        if (error instanceof AxiosError && error.response)
+        toast.error(error.response.data.error);
+      }
+    }
+
   // if (true) {
   //   return (
   //     <>
@@ -218,17 +235,16 @@ const VariantPage = () => {
             Thêm một biến thể mới
           </button>
           {attribute.map((item) => (
-            
-            <section key={item._id}>
+            <section key={item._id} className="relative">
               <div
-                className={`bg-white py-5 px-10 items-center ${
+                className={`bg-white py-5 px-10 ${
                   item._id === activeArrow
                     ? "rounded-t-3xl"
                     : "rounded-3xl mb-5"
                 }`}
               >
                 <div className="flex justify-between transition-all">
-                  <p className="text-xl font-bold">{item.name}</p>
+                  <p className="text-xl font-bold ">{item.name}</p>
                   <i
                     className={`${
                       activeArrow === item._id
@@ -334,6 +350,15 @@ const VariantPage = () => {
                   </motion.div>
                 )}
               </AnimatePresence>
+
+              {item._id !== ID_DEFAULT_ATTRIBUTE && (
+                <div
+                  className="absolute top-1/2 left-full -translate-y-1/2 bg-red-400 text-white py-1 px-2 rounded-lg cursor-pointer"
+                  onClick={() => handleDeleteVariant(item._id)}
+                >
+                  <i className="ri-delete-bin-line"></i>
+                </div>
+              )}
             </section>
           ))}
         </div>

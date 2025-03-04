@@ -60,7 +60,7 @@ const CustomerPage = () => {
 
   const limit = 10;
 
-  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const debouncedSearchQuery = useDebounce(searchQuery, 1000);
 
   const handleDelete = async (id: string) => {
     await dispatch(removeOneCustomer(id)).unwrap();
@@ -167,7 +167,7 @@ const CustomerPage = () => {
           </div>
 
           <div className="my-5">
-            <table className="w-full border-collapse border border-slate-500 min-h-[516px]">
+            <table className="w-full border-collapse border border-slate-500">
               <thead>
                 <tr>
                   <th className="border border-slate-600">STT</th>
@@ -183,58 +183,66 @@ const CustomerPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {customers.map((item, index) => {
-                  return (
-                    <tr
-                      key={item._id}
-                      className="hover:cursor-pointer hover:bg-slate-100"
-                    >
-                      <td className="border border-slate-600 text-center">
-                        {(page - 1) * limit + (index + 1)}
-                      </td>
-                      <td
-                        className="border border-slate-600 text-center"
-                        onClick={() => toCusTomerDetail(item._id)}
+                {customers.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-4 text-center font-bold">
+                      Không có dữ liệu
+                    </td>
+                  </tr>
+                ) : (
+                  customers.map((item, index) => {
+                    return (
+                      <tr
+                        key={item._id}
+                        className="hover:cursor-pointer hover:bg-slate-100"
                       >
-                        {item.name}
-                      </td>
-                      <td className="border border-slate-600 text-center">
-                        {item.telephone}
-                      </td>
-                      <td className="border border-slate-600 text-center">
-                        {item.score}
-                      </td>
-                      <td className="border border-slate-600 text-center">
-                        <AlertDialogTrigger asChild>
+                        <td className="border border-slate-600 text-center py-4">
+                          {(page - 1) * limit + (index + 1)}
+                        </td>
+                        <td
+                          className="border border-slate-600 text-center"
+                          onClick={() => toCusTomerDetail(item._id)}
+                        >
+                          {item.name}
+                        </td>
+                        <td className="border border-slate-600 text-center">
+                          {item.telephone}
+                        </td>
+                        <td className="border border-slate-600 text-center">
+                          {item.score}
+                        </td>
+                        <td className="border border-slate-600 text-center">
+                          <AlertDialogTrigger asChild>
+                            <button
+                              className="bg-red-500 mr-3 p-1 rounded-md"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                setIdDelete(item._id);
+                              }}
+                            >
+                              Xóa
+                            </button>
+                          </AlertDialogTrigger>
+
                           <button
-                            className="bg-red-500 mr-3 p-1 rounded-md"
+                            className="bg-yellow-200 p-1 rounded-md"
                             onClick={(event) => {
-                              event.stopPropagation();
-                              setIdDelete(item._id);
+                              event?.stopPropagation();
+                              setIsOpen(true);
+                              setId(item._id);
                             }}
                           >
-                            Xóa
+                            Cập nhật
                           </button>
-                        </AlertDialogTrigger>
-
-                        <button
-                          className="bg-yellow-200 p-1 rounded-md"
-                          onClick={(event) => {
-                            event?.stopPropagation();
-                            setIsOpen(true);
-                            setId(item._id);
-                          }}
-                        >
-                          Cập nhật
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
           </div>
-          <ButtonPage setPage={setPage} page={page} total={total} />
+          {!searchQuery && <ButtonPage setPage={setPage} page={page} total={total} />}
 
           {isOpen && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

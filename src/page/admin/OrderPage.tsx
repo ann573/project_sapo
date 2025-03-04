@@ -61,7 +61,7 @@ const OrderPage = () => {
             ) : (
               orders.orders.map((item) => (
                 <tr className="even:bg-slate-50" key={item._id}>
-                  <td className="text-blue-400 px-4 py-2">
+                  <td className="text-blue-400 px-4 py-3">
                     <Link className="hover:border-blue-400 hover:border-b cursor-pointer" to={`/admin/orders/${item._id}`}>
                       {item._id}
                     </Link>

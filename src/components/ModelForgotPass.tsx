@@ -16,6 +16,13 @@ import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import EditUserForm from "./EditUserForm";
 
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+
 type TFormForgot = {
   email: string;
 };
@@ -30,6 +37,8 @@ const ModelForgotPass = () => {
   const [isOpenForm, setIsOpenForm] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [userEmail, setUserEmail] = useState<string>("");
+
+  const [otp, setOtp] = useState<string>("");
 
   const formEmail = useForm<TFormForgot>();
   const formOtp = useForm<TFormOTP>();
@@ -68,14 +77,13 @@ const ModelForgotPass = () => {
   };
 
   // Xác nhận OTP
-  const onSubmitOTP = async (data: TFormOTP) => {
+  const onSubmitOTP = async () => {
     try {
-      console.log(data);
       const res: AxiosResponse = await axios.post(
-        "/users/verify-otp",
+        `${API_ENDPOINT}/users/verify-otp`,
         {
           email: userEmail,
-          otp: data.otp,
+          otp,
         },
         {
           headers: {
@@ -142,6 +150,7 @@ const ModelForgotPass = () => {
               Gửi mã OTP
             </Button>
           </form>
+
           {isLoading && (
             <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
               <ClipLoader color="#0089ff" size={50} />
@@ -154,31 +163,33 @@ const ModelForgotPass = () => {
       <Dialog open={isOtpOpen} onOpenChange={setIsOtpOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Nhập mã OTP</DialogTitle>
+            <DialogTitle className="text-center text-xl font-bold">
+              Nhập mã OTP
+            </DialogTitle>
           </DialogHeader>
-          <form
-            onSubmit={formOtp.handleSubmit(onSubmitOTP)}
-            className="space-y-4"
+
+          <div className="flex justify-center my-3">
+            <InputOTP maxLength={6} onChange={setOtp}>
+              <InputOTPGroup>
+                <InputOTPSlot index={0} className="border-black" />
+                <InputOTPSlot index={1} className="border-black" />
+                <InputOTPSlot index={2} className="border-black" />
+              </InputOTPGroup>
+              <InputOTPSeparator />
+              <InputOTPGroup>
+                <InputOTPSlot index={3} className="border-black" />
+                <InputOTPSlot index={4} className="border-black" />
+                <InputOTPSlot index={5} className="border-black" />
+              </InputOTPGroup>
+            </InputOTP>
+          </div>
+
+          <button
+            onClick={onSubmitOTP}
+            className="w-full bg-green-500 text-white py-2 rounded-lg font-semibold"
           >
-            <div>
-              <Label htmlFor="otp">Mã OTP</Label>
-              <Input
-                id="otp"
-                placeholder="Nhập mã OTP"
-                {...formOtp.register("otp", {
-                  required: "OTP không được để trống",
-                })}
-              />
-              {formOtp.formState.errors.otp && (
-                <p className="text-red-500">
-                  {formOtp.formState.errors.otp.message}
-                </p>
-              )}
-            </div>
-            <Button type="submit" className="w-full bg-green-500 text-white">
-              Xác nhận OTP
-            </Button>
-          </form>
+            Xác nhận OTP
+          </button>
         </DialogContent>
       </Dialog>
 
