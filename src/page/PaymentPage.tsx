@@ -22,7 +22,6 @@ const PaymentPage = () => {
     const accessToken = Cookies.get("accessToken");
     if (!accessToken) navigate("/login");
   }, [navigate]);
-
   const [idProduct, setIdProduct] = useState<string>("");
   const [products, setProducts] = useState<IProduct[]>([]);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
@@ -34,6 +33,7 @@ const PaymentPage = () => {
   const [customer, setCustomer] = useState<ICustomer[]>([]);
   const [customerSelect, setCustomerSelect] = useState<ICustomer | null>(null);
   const [score, setScore] = useState<number>(0);
+  const [isOpenMobile, setIsOpenMobile] = useState<boolean>(false);
 
   const numberArr = new Array(5).fill(0);
 
@@ -62,6 +62,7 @@ const PaymentPage = () => {
       })();
     }
   }, [idProduct, products]);
+
 
   useEffect(() => {
     let pay: number = total;
@@ -160,6 +161,7 @@ const PaymentPage = () => {
     if (query) {
       setIsSearch(true);
       const data = await searchCustomer(query);
+      console.log(data);
       setCustomer([...data]);
     } else setIsSearch(false);
   };
@@ -184,6 +186,7 @@ const PaymentPage = () => {
   };
 
   const onPayment = async () => {
+    setIsOpenMobile(false)
     const value = setOther();
     if (value.includes("-")) {
       toast.error("Số tiền thanh toán đang âm");
@@ -232,8 +235,8 @@ const PaymentPage = () => {
     <>
       <HeaderPayment setIdProduct={setIdProduct} />
 
-      <section className="grid grid-cols-11">
-        <div className="col-span-8 border-r-8  h-screen-minus-pay">
+      <section className="grid xl:grid-cols-11 grid-cols-12 md:static relative">
+        <div className="lg:col-span-8 md:col-span-7 col-span-12 border-r-8 h-screen-minus-pay">
           <ProductList
             products={products}
             quantities={quantities}
@@ -243,36 +246,50 @@ const PaymentPage = () => {
             setQuantities={setQuantities}
             setProducts={setProducts}
             setTotal={setTotal}
+            setIsOpenMobile={setIsOpenMobile}
           />
         </div>
 
         {/* ==================== */}
-        <div className="col-span-3 py-2 px-3 w-full flex flex-col">
-          <PaymentDetail
-            products={products}
-            customerSelect={customerSelect}
-            setCustomerSelect={setCustomerSelect}
-            handleSearch={handleSearch}
-            setIsOpen={setIsOpen}
-            isSearch={isSearch}
-            customer={customer}
-            setIsSearch={setIsSearch}
-            percentage={percentage}
-            setPercentage={setPercentage}
-            mustPay={mustPay}
-            numberArr={numberArr}
-            setCustomPayment={setCustomPayment}
-            renderPayment={renderPayment}
-            customPayment={customPayment}
-            handleCustomPayment={handleCustomPayment}
-            setOther={setOther}
-            onPayment={onPayment}
-            total={total}
-            setScore={setScore}
-            score={score}
-          />
-        </div>
+        {(isOpenMobile || window.innerWidth >= 768 ) && (
+          <div
+            className={`xl:col-span-3 lg:col-span-4 md:col-span-5 col-span-12 py-2 px-3 md:w-full w-2/3 md:flex flex-col shadow-lg sm:shadow-none transition ease-in-out duration-300 md:static absolute bg-white z-[70] left-0 right-0 mx-auto rounded-lg`}
+          >
+            <PaymentDetail
+              products={products}
+              customerSelect={customerSelect}
+              setCustomerSelect={setCustomerSelect}
+              handleSearch={handleSearch}
+              setIsOpen={setIsOpen}
+              isSearch={isSearch}
+              customer={customer}
+              setIsSearch={setIsSearch}
+              percentage={percentage}
+              setPercentage={setPercentage}
+              mustPay={mustPay}
+              numberArr={numberArr}
+              setCustomPayment={setCustomPayment}
+              renderPayment={renderPayment}
+              customPayment={customPayment}
+              handleCustomPayment={handleCustomPayment}
+              setOther={setOther}
+              onPayment={onPayment}
+              total={total}
+              setScore={setScore}
+              score={score}
+            />
+          </div>
+        )}
       </section>
+
+      <div
+        className={`fixed inset-0 bg-black transition-opacity duration-300 ease-in-out ${
+          isOpenMobile
+            ? "opacity-40 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setIsOpenMobile(false)}
+      ></div>
 
       {isOpen && (
         <PopupCustomer

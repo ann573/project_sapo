@@ -54,9 +54,7 @@ const PaymentDetail: React.FC<PaymentPageProps> = ({
   const debouncedSearchQuery = useDebounce(searchQuery, 800);
 
   useEffect(() => {
-    if (debouncedSearchQuery) {
       handleSearch(debouncedSearchQuery);
-    }
   }, [debouncedSearchQuery]);
   return (
     <>
@@ -89,7 +87,7 @@ const PaymentDetail: React.FC<PaymentPageProps> = ({
             <>
               <input
                 type="text"
-                className="w-full border-b-[3px] focus:outline-none py-1 px-7"
+                className="w-full border-b-[3px] focus:outline-none py-1 px-7 sm:placeholder:text-base placeholder:text-sm"
                 placeholder="Thêm khách hàng vào đơn"
                 onInput={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setSearchQuery(e.target.value)
@@ -143,13 +141,13 @@ const PaymentDetail: React.FC<PaymentPageProps> = ({
         </div>
         {/* ===================================SCORE============================= */}
         <div className="flex justify-between my-4 pb-2 relative after:content-[''] after:w-1/2 after:h-[1px] after:bg-gray-300 after:absolute after:right-0 after:top-full">
-          <p>Chiết khấu điểm</p>
-          <div>
+          <p className="w-1/2">Chiết khấu điểm</p>
+          <div className="flex gap-1 justify-end items-center">
             <input
               type="number"
               max={customerSelect?.score}
               value={score}
-              className="text-right focus:outline-none placeholder:text-black"
+              className="text-right w-1/2 focus:outline-none placeholder:text-black "
               onInput={(e: React.FormEvent<HTMLInputElement>) => {
                 const inputElement = e.target as HTMLInputElement;
                 const value = Number(inputElement.value);
@@ -221,13 +219,13 @@ const PaymentDetail: React.FC<PaymentPageProps> = ({
           </div>
         )}
         <div className="flex justify-between my-4 pb-2 relative after:content-[''] after:w-1/2 after:h-[1px] after:bg-gray-300 after:absolute after:right-0 after:top-full">
-          <p>Tiền khách đưa</p>
-          <div className="flex gap-1">
+          <p className="w-full">Tiền khách đưa</p>
+          <div className="flex gap-1 justify-end">
             <input
               type="text"
               value={customPayment || 0}
               placeholder="0"
-              className="placeholder:text-black placeholder:text-right text-right focus:outline-none"
+              className="placeholder:text-black placeholder:text-right text-right focus:outline-none w-[70%]"
               onChange={handleCustomPayment}
             />
             <span>₫</span>
@@ -240,7 +238,7 @@ const PaymentDetail: React.FC<PaymentPageProps> = ({
       </div>
       <div>
         <button
-          className="w-full bg-green-500 text-white py-3 text-xl font-semibold rounded-md"
+          className="w-full bg-green-500 text-white py-3 text-xl font-semibold rounded-md mt-5"
           onClick={() => onPayment()}
         >
           Thanh toán

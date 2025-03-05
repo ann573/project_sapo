@@ -49,7 +49,7 @@ const HeaderPayment = ({
   return (
     <header className="bg-primary_header h-14">
       <div className=" lg:max-w[1000px] xl:max-w-[1400px] 2xl:max-w-[1600px] xl:px-5 lg:px-10 sm:px-10 px-5 mx-auto h-full flex">
-        <div className="lg:w-[30%] md:w-[35%] sm:w-1/2 w-[80%] flex items-center h-full relative mr-auto">
+        <div className="lg:w-[30%] md:w-[35%] sm:w-2/3 w-[80%] flex items-center h-full relative mr-auto">
           <input
             type="text"
             ref={inputRef}

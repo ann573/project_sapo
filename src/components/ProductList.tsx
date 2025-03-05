@@ -13,6 +13,7 @@ interface ProductListProps {
   >;
   setProducts: React.Dispatch<React.SetStateAction<IProduct[]>>;
   setTotal: React.Dispatch<React.SetStateAction<number>>;
+  setIsOpenMobile: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ProductList: React.FC<ProductListProps> = ({
@@ -24,6 +25,7 @@ const ProductList: React.FC<ProductListProps> = ({
   setQuantities,
   setProducts,
   setTotal,
+  setIsOpenMobile,
 }) => {
   const handleVariantChange = (product: IProduct, newIndex: number) => {
     const newVariantId = product.variants[newIndex]._id;
@@ -82,15 +84,17 @@ const ProductList: React.FC<ProductListProps> = ({
   }, [products, quantities, setTotal]);
   return (
     <>
-      <div className="h-[85%] border-b-[6px] ">
+      <div className="md:h-[85%] h-[90%] border-b-[6px] ">
         {!products.length ? (
           <div className="flex flex-col items-center justify-center h-full text-textColor select-none">
             <img
               src="https://dunlopilloshop.com/template/img/emptycart.png"
               alt="empty"
-              className="w-1/12"
+              className="lg:w-1/12 md:w-1/5 w-3/12"
             />
-            <p className="my-3">Đơn hàng của bạn chưa có sản phẩm nào</p>
+            <p className="my-3 md:text-base text-sm">
+              Đơn hàng của bạn chưa có sản phẩm nào
+            </p>
             <p className="border px-2 py-1 rounded-md">Thêm sản phẩm ngay</p>
           </div>
         ) : (
@@ -159,10 +163,7 @@ const ProductList: React.FC<ProductListProps> = ({
                   </div>
 
                   <div className="col-start-8 col-span-3 flex justify-center gap-3 items-center">
-                    <label htmlFor="">
-                      {" "}
-                      {"Phân loại"}:{" "}
-                    </label>
+                    <label htmlFor=""> {"Phân loại"}: </label>
                     <select
                       value={selectedVariantIndex}
                       onChange={(e) =>
@@ -205,31 +206,42 @@ const ProductList: React.FC<ProductListProps> = ({
         )}
       </div>
 
-      <div className="grid grid-cols-4 h-[15%] px-3 py-5 gap-10">
+      <div className=" lg:grid-cols-4 grid-cols-2 xl:text-xl lg:text-lg text-sm h-[15%] px-3 xl:py-5 py-3 xl:gap-10 gap-5 md:grid hidden">
         <Link
-          className="bg-[#e3eefc] rounded-xl text-xl font-medium flex items-center justify-center"
+          className="bg-[#e3eefc] rounded-xl font-medium flex items-center justify-center text-center py-2 md:py-0"
           to="/admin"
         >
           Trang quản trị
         </Link>
         <Link
-          className="bg-[#e3eefc] rounded-xl text-xl font-medium flex items-center justify-center"
+          className="bg-[#e3eefc] rounded-xl font-medium flex items-center justify-center text-center"
           to="/admin/product"
         >
           Quản lý sản phẩm
         </Link>
         <Link
-          className="bg-[#e3eefc] rounded-xl text-xl font-medium flex items-center justify-center"
+          className="bg-[#e3eefc] rounded-xl font-medium flex items-center justify-center text-center"
           to="/admin/order"
         >
           Quản lý đơn hàng
         </Link>
         <Link
-          className="bg-[#e3eefc] rounded-xl text-xl font-medium flex items-center justify-center"
+          className="bg-[#e3eefc] rounded-xl font-medium flex items-center justify-center text-center"
           to="/admin/customer"
         >
           Quản lý khách hàng
         </Link>
+      </div>
+
+      <div className="md:hidden py-5 px-10 h-[10%] flex items-center">
+        <button
+          className="bg-gradient-to-r from-cyan-500 to-blue-500 w-full text-white py-2 rounded-lg font-semibold"
+          onClick={() => {
+            setIsOpenMobile(prev =>  !prev);
+          }}
+        >
+          Chi tiết thanh toán{" "}
+        </button>
       </div>
     </>
   );
