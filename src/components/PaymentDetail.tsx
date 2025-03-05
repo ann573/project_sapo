@@ -206,7 +206,7 @@ const PaymentDetail: React.FC<PaymentPageProps> = ({
               return (
                 <div
                   key={index}
-                  className="flex justify-center items-center my-2 bg-second cursor-pointer py-1 rounded-lg"
+                  className="flex justify-center items-center my-2 bg-second cursor-pointer py-1 rounded-lg sm:text-lg text-xs"
                   onClick={() => {
                     const payment = renderPayment(mustPay, index);
                     setCustomPayment(payment);

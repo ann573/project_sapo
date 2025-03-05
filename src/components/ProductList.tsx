@@ -110,29 +110,29 @@ const ProductList: React.FC<ProductListProps> = ({
               return (
                 <div
                   key={product.idVariant}
-                  className="even:bg-blue-100 grid grid-cols-12 p-3 items-center border rounded-lg shadow-sm"
+                  className="even:bg-blue-100 grid grid-cols-12 p-3 items-center border rounded-lg shadow-sm lg:gap-3 gap-1"
                 >
-                  <div className="flex justify-start items-center">
-                    <p className="mr-8">{index + 1}</p>
+                  <div className="flex justify-between items-center">
+                    <p className="sm:text-base text-xs">{index + 1}</p>
                     <i
-                      className="ri-delete-bin-6-line text-xl cursor-pointer"
+                      className="ri-delete-bin-6-line sm:text-xl text-sm cursor-pointer"
                       onClick={() => handleDelete(product.idVariant)}
                     ></i>
                   </div>
                   <div>
-                    <p className="font-semibold text-2xl text-center">
+                    <p className="font-semibold xl:text-2xl lg:text-xl sm:text-sm text-center">
                       {product.sort_title}
                     </p>
                   </div>
 
-                  <div className="col-span-4">
-                    <p className="text-xl font-semibold">{product.name}</p>
+                  <div className="col-span-3">
+                    <p className="xl:text-xl font-semibold lg:text-lg sm:text-base text-sm">{product.name}</p>
                     <p className="text-sm italic">Mặc định</p>
                   </div>
 
-                  <div className="flex items-center">
+                  <div className="flex items-center lg:col-span-1 col-span-2">
                     <button
-                      className="bg-gray-300 hover:bg-gray-400 text-xl font-semibold w-5 h-[25px] flex items-center justify-center rounded-l-md"
+                      className="bg-gray-300 hover:bg-gray-400 sm:text-xl text-xs font-semibold w-[20px] sm:h-[25px] h-4 flex items-center justify-center rounded-l-md"
                       onClick={() =>
                         handleDecrement(product._id, selectedVariant._id)
                       }
@@ -149,11 +149,11 @@ const ProductList: React.FC<ProductListProps> = ({
                           [product.idVariant]: value,
                         }));
                       }}
-                      className="w-9 h-[25px] text-center border border-gray-300"
+                      className="xl:w-9 w-5 sm:h-[25px] h-4 xl:text-base text-xs text-center border border-gray-300"
                       min="1"
                     />
                     <button
-                      className="bg-gray-300 hover:bg-gray-400 w-5 h-[25px] flex items-center justify-center text-xl font-semibold px-2 rounded-r-md "
+                      className="bg-gray-300 hover:bg-gray-400 w-5 sm:h-[25px] h-4 flex items-center justify-center sm:text-xl font-semibold px-2 rounded-r-md  text-xs"
                       onClick={() =>
                         handleIncrease(product._id, selectedVariant._id)
                       }
@@ -162,14 +162,14 @@ const ProductList: React.FC<ProductListProps> = ({
                     </button>
                   </div>
 
-                  <div className="col-start-8 col-span-3 flex justify-center gap-3 items-center">
-                    <label htmlFor=""> {"Phân loại"}: </label>
+                  <div className="xl:col-start-7 col-start-8 lg:col-span-3 col-span-2 flex justify-center gap-3 items-center">
+                    <label htmlFor="" className="lg:inline hidden"> {"Phân loại"}: </label>
                     <select
                       value={selectedVariantIndex}
                       onChange={(e) =>
                         handleVariantChange(product, Number(e.target.value))
                       }
-                      className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:border-blue-500 block w-[33%] p-1 cursor-pointer"
+                      className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:border-blue-500 block lg:w-[33%] w-2/3 p-1 cursor-pointer"
                     >
                       {product.variants.map((item, idx) => (
                         <option key={idx} value={idx}>
@@ -179,7 +179,7 @@ const ProductList: React.FC<ProductListProps> = ({
                     </select>
                   </div>
 
-                  <div className="col-start-11 flex justify-center">
+                  <div className="xl:col-start-10 col-start-10 flex justify-center lg:text-base text-xs">
                     <p>
                       {selectedVariant.price.toLocaleString("vi-VN", {
                         style: "currency",
@@ -188,7 +188,7 @@ const ProductList: React.FC<ProductListProps> = ({
                     </p>
                   </div>
 
-                  <div className="flex justify-end items-center text-lg font-semibold">
+                  <div className="flex justify-end items-center lg:text-lg font-semibold lg:col-span-2  col-start-12 text-sm">
                     <p>
                       {(
                         selectedVariant.price *
@@ -221,7 +221,7 @@ const ProductList: React.FC<ProductListProps> = ({
         </Link>
         <Link
           className="bg-[#e3eefc] rounded-xl font-medium flex items-center justify-center text-center"
-          to="/admin/order"
+          to="/admin/orders"
         >
           Quản lý đơn hàng
         </Link>
