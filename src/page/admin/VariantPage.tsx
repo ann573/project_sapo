@@ -200,13 +200,13 @@ const VariantPage = () => {
       const res: AxiosResponse = await instance.delete(`/attributes/${id}`);
 
       if (res.status === 200) {
-        toast.success("Xóa thành công")
+        toast.success("Xóa thành công");
       }
     } catch (error) {
-        if (error instanceof AxiosError && error.response)
+      if (error instanceof AxiosError && error.response)
         toast.error(error.response.data.error);
-      }
     }
+  };
 
   // if (true) {
   //   return (
@@ -353,7 +353,7 @@ const VariantPage = () => {
 
               {item._id !== ID_DEFAULT_ATTRIBUTE && (
                 <div
-                  className="absolute top-1/2 left-full -translate-y-1/2 bg-red-400 text-white py-1 px-2 rounded-lg cursor-pointer"
+                  className="absolute top-1/2 md:left-full -left-2 -translate-y-1/2 bg-red-400 text-white py-1 px-2 rounded-lg cursor-pointer"
                   onClick={() => handleDeleteVariant(item._id)}
                 >
                   <i className="ri-delete-bin-line"></i>

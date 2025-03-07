@@ -97,7 +97,7 @@ const LayoutAdmin = () => {
         </div>
 
         {/* Nội dung chính */}
-        <div className="lg:col-span-10 col-span-12 bg-[#f4f6f8] py-5 xl:px-32 px-16 h-full">
+        <div className="lg:col-span-10 col-span-12 bg-[#f4f6f8] py-5 xl:px-32 md:px-16 px-5 h-full">
           <Outlet />
         </div>
 

@@ -67,7 +67,9 @@ const ModelAddEmployee = () => {
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button className="bg-blue-500 text-white">Thêm nhân viên</Button>
+          <Button className="bg-blue-500 text-white sm:text-base text-sm py-2">
+            Thêm nhân viên
+          </Button>
         </DialogTrigger>
 
         <DialogContent>

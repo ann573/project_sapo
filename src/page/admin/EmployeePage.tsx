@@ -96,16 +96,16 @@ const EmployeePage = () => {
   };
 
   const handleDelete = async (id: string) => {
-    const res = await instance.delete(`/users/${id}`)
+    const res = await instance.delete(`/users/${id}`);
     if (res.status === 200) {
       setEmployee((prev) => {
-        return prev.filter(item => item._id !== res.data.data._id)
-      })
-      setRevenue(prev => {
-        return prev && prev.filter(item => item.name !== res.data.data.name)
-      })
-      toast.success("Xóa thành công")
-    } 
+        return prev.filter((item) => item._id !== res.data.data._id);
+      });
+      setRevenue((prev) => {
+        return prev && prev.filter((item) => item.name !== res.data.data.name);
+      });
+      toast.success("Xóa thành công");
+    }
   };
   return (
     <>
@@ -115,9 +115,11 @@ const EmployeePage = () => {
         </div>
       ) : (
         <>
-          <section className="bg-white py-5 flex w-full flex-grow items-center mb-5">
+          <section className="bg-white py-5 flex w-full flex-grow flex-wrap items-center justify-center mb-5 gap-10 lg:px-0 sm:px-5 px-3">
             <div
-              className={revenue && revenue?.length > 2 ? "w-full" : "w-[70%]"}
+              className={`w-full ${
+                revenue && revenue?.length > 2 ? "lg:w-full" : "lg:w-[70%]"
+              }`}
             >
               <ResponsiveContainer width={"100%"} height={400}>
                 <BarChart
@@ -156,9 +158,11 @@ const EmployeePage = () => {
               </ResponsiveContainer>
             </div>
 
-            <div className="flex flex-col items-center justify-center w-1/2 px-10 sticky bg-white ">
+            <div className="flex flex-col items-center justify-center lg:w-1/2 w-full px-10 sticky bg-white border py-1 rounded-lg">
               <div className="mb-3">
-                <h2 className="text-2xl font-semibold">Doanh thu hôm nay</h2>
+                <h2 className="text-2xl font-semibold text-center">
+                  Doanh thu hôm nay
+                </h2>
                 <h3 className="text-center font-bold text-green-500 text-lg">
                   {total.totalAmount && formatCurrency(total.totalAmount)}{" "}
                   <i className="ri-funds-fill"></i>
@@ -182,26 +186,26 @@ const EmployeePage = () => {
             </div>
           </section>
 
-          <section className="bg-white px-10 py-3">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold border-b pb-2">
+          <section className="bg-white sm:px-10 px-3 py-3">
+            <div className="flex justify-between items-center flex-wrap mb-4 gap-y-4">
+              <h2 className="text-xl font-bold border-b  pb-2">
                 Danh sách nhân viên
               </h2>
               <ModelAddEmployee />
             </div>
 
-            <div className="grid grid-cols-2 gap-4 p-4">
+            <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 sm:p-4 p-2">
               {employees &&
                 employees.map((employee) => (
                   <div
                     key={employee._id}
-                    className="p-4 flex items-center justify-between space-x-4 hover:shadow-lg transition-shadow rounded-xl border-2"
+                    className="sm:p-4 p-2 flex items-center justify-between space-x-4 hover:shadow-lg transition-shadow rounded-xl border-2"
                   >
                     <div className="flex gap-3">
                       <img
                         src="https://png.pngtree.com/png-vector/20191009/ourmid/pngtree-user-icon-png-image_1796659.jpg"
                         alt={employee.name}
-                        className="w-16 h-16 rounded-full"
+                        className="xs:w-16 xs:h-16 h-8 rounded-full"
                       />
                       <div className="flex flex-col justify-center p-0">
                         {editingName === employee._id ? (

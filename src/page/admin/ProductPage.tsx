@@ -82,7 +82,6 @@ const ProductPage = () => {
 
   return (
     <>
-      {loading && <TableSkeleton />}
       <section className="bg-white p-5">
         <div className="relative">
           <input
@@ -94,110 +93,116 @@ const ProductPage = () => {
           <i className="ri-search-line absolute left-2 top-1/4"></i>
         </div>
 
-        {role === "boss" && (
-          <button className="mt-3 bg-green-500 text-white py-2 px-3 rounded-md font-semibold">
-            <Link to={"/admin/product/add_and_update"}>Thêm sản phẩm</Link>
-          </button>
-        )}
+        {loading ? (
+          <TableSkeleton />
+        ) : (
+          <>
+            {role === "boss" && (
+              <button className="mt-3 bg-green-500 text-white py-2 px-3 rounded-md font-semibold">
+                <Link to={"/admin/product/add_and_update"}>Thêm sản phẩm</Link>
+              </button>
+            )}
 
-        <div className="my-5">
-          <table className="w-full border-collapse border border-slate-500 min-h-[516px]">
-            <thead>
-              <tr>
-                <th className="border border-slate-600">STT</th>
-                <th className="border border-slate-600">Tên sản phẩm</th>
-                <th className="border border-slate-600">Mã sản phẩm</th>
-                <th className="border border-slate-600">Phân loại</th>
-                <th className="border border-slate-600">Tồn kho</th>
-                <th className="border border-slate-600">Giá</th>
-                {role === "boss" && (
-                  <th className="border border-slate-600">Hoạt động</th>
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((item, index) =>
-                item.variants.map((variant, variantIndex) => (
-                  <tr key={variant._id}>
-                    {/* Chỉ hiển thị STT, tên sản phẩm và mã sản phẩm cho biến thể đầu tiên */}
-                    {variantIndex === 0 && (
-                      <>
-                        <td
-                          className="border border-slate-600 p-2 text-center"
-                          rowSpan={item.variants.length}
-                        >
-                          {(page - 1) * limit + (index + 1)}
-                        </td>
-                        <td
-                          className="border border-slate-600 p-2 text-center"
-                          rowSpan={item.variants.length}
-                        >
-                          {item.name}
-                        </td>
-                        <td
-                          className="border border-slate-600 p-2 text-center"
-                          rowSpan={item.variants.length}
-                        >
-                          {item.sort_title}
-                        </td>
-                      </>
-                    )}
-
-                    {/* Biến thể của sản phẩm */}
-                    <td className="border border-slate-600 p-2 text-center">
-                      {variant.attribute?.name}
-                    </td>
-                    <td className="border border-slate-600 p-2 text-center">
-                      {variant.stock}
-                    </td>
-                    {/* Giá của biến thể */}
-                    <td className="border border-slate-600 p-2 text-center">
-                      {variant.price?.toLocaleString("vi", {
-                        style: "currency",
-                        currency: "VND",
-                      })}
-                    </td>
-
-                    {/* Hành động (Xóa, Cập nhật) */}
-                    {variantIndex === 0 && role==='boss' && (
-                      <td
-                        className="border border-slate-600 p-2 text-center "
-                        rowSpan={item.variants.length}
-                      >
-                        <button
-                          className="bg-red-500 text-white p-1 rounded-md mr-1"
-                          onClick={() => handleDelete(item._id)}
-                        >
-                          Xóa
-                        </button>
-
-                        <button
-                          className="bg-yellow-200 p-1 rounded-md"
-                          onClick={() => {}}
-                        >
-                          <Link
-                            to={`/admin/product/add_and_update/${item._id}`}
-                          >
-                            Cập nhật
-                          </Link>
-                        </button>
-                      </td>
+            <div className="my-5">
+              <table className="w-full border-collapse border border-slate-500 min-h-[516px]">
+                <thead>
+                  <tr>
+                    <th className="border border-slate-600">STT</th>
+                    <th className="border border-slate-600">Tên sản phẩm</th>
+                    <th className="border border-slate-600">Mã sản phẩm</th>
+                    <th className="border border-slate-600">Phân loại</th>
+                    <th className="border border-slate-600">Tồn kho</th>
+                    <th className="border border-slate-600">Giá</th>
+                    {role === "boss" && (
+                      <th className="border border-slate-600">Hoạt động</th>
                     )}
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                </thead>
+                <tbody>
+                  {products.map((item, index) =>
+                    item.variants.map((variant, variantIndex) => (
+                      <tr key={variant._id}>
+                        {/* Chỉ hiển thị STT, tên sản phẩm và mã sản phẩm cho biến thể đầu tiên */}
+                        {variantIndex === 0 && (
+                          <>
+                            <td
+                              className="border border-slate-600 p-2 text-center"
+                              rowSpan={item.variants.length}
+                            >
+                              {(page - 1) * limit + (index + 1)}
+                            </td>
+                            <td
+                              className="border border-slate-600 p-2 text-center"
+                              rowSpan={item.variants.length}
+                            >
+                              {item.name}
+                            </td>
+                            <td
+                              className="border border-slate-600 p-2 text-center"
+                              rowSpan={item.variants.length}
+                            >
+                              {item.sort_title}
+                            </td>
+                          </>
+                        )}
 
-        <ButtonPage setPage={setPage} page={page} total={total} />
+                        {/* Biến thể của sản phẩm */}
+                        <td className="border border-slate-600 p-2 text-center">
+                          {variant.attribute?.name}
+                        </td>
+                        <td className="border border-slate-600 p-2 text-center">
+                          {variant.stock}
+                        </td>
+                        {/* Giá của biến thể */}
+                        <td className="border border-slate-600 p-2 text-center">
+                          {variant.price?.toLocaleString("vi", {
+                            style: "currency",
+                            currency: "VND",
+                          })}
+                        </td>
+
+                        {/* Hành động (Xóa, Cập nhật) */}
+                        {variantIndex === 0 && role === "boss" && (
+                          <td
+                            className="border border-slate-600 p-2 text-center "
+                            rowSpan={item.variants.length}
+                          >
+                            <button
+                              className="bg-red-500 text-white p-1 rounded-md mr-1"
+                              onClick={() => handleDelete(item._id)}
+                            >
+                              Xóa
+                            </button>
+
+                            <button
+                              className="bg-yellow-200 p-1 rounded-md"
+                              onClick={() => {}}
+                            >
+                              <Link
+                                to={`/admin/product/add_and_update/${item._id}`}
+                              >
+                                Cập nhật
+                              </Link>
+                            </button>
+                          </td>
+                        )}
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <ButtonPage setPage={setPage} page={page} total={total} />
+          </>
+        )}
 
         <ToastContainer />
       </section>
 
       <section className="bg-white mt-5">
         <div className="p-6">
-          <h2 className="text-2xl font-bold mb-4">
+          <h2 className="md:text-2xl text-lg font-bold mb-4">
             Top Sản Phẩm Bán Chạy Trong Tuần
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

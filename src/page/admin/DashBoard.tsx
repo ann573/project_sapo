@@ -23,50 +23,49 @@ const DashBoard = () => {
   const [totalOrders, setTotalOrders] = useState<number>(0);
   const [orderWeek, setOrderWeek] = useState<OrdersWeek[]>([]);
 
-  
   useEffect(() => {
     const fetchData = async () => {
       try {
         const resToday: AxiosResponse = await instance.get("/orders/today");
         setTotalAmount(resToday.data.data.totalAmount);
         setTotalOrders(resToday.data.data.totalOrders);
-  
+
         const resWeek: AxiosResponse = await instance.get("/orders/week");
         setOrderWeek(resWeek.data.data);
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu:", error);
       }
     };
-  
+
     fetchData();
   }, []);
 
   const formatCurrency = (value: number | string) => {
     return value.toLocaleString("vi", { style: "currency", currency: "VND" });
   };
-  
+
   return (
     <>
       <section className="bg-white mb-10">
-        <h1 className="p-3 text-xl font-semibold">
+        <h1 className="p-3 md:text-xl text-lg font-semibold">
           Kết quả kinh doanh trong ngày
         </h1>
-        <div className="grid grid-cols-3 border-t">
-          <div className="flex items-center justify-center gap-5 py-3">
-            <i className="ri-money-dollar-circle-fill text-3xl bg-green-500 text-white py-1 px-2 rounded-full"></i>
+        <div className="grid grid-cols-11 border-t">
+          <div className="flex items-center justify-center md:gap-5 gap-3 py-3 col-span-5">
+            <i className="ri-money-dollar-circle-fill md:text-3xl text-xl bg-green-500 text-white py-1 px-2 rounded-full"></i>
             <div>
-              <h2 className="font-medium">Doanh thu</h2>
-              <p className="font-bold text-xl text-[#22c55e]">
+              <h2 className="font-medium md:text-base text-sm">Doanh thu</h2>
+              <p className="font-bold md:text-xl text-lg text-[#22c55e]">
                 {<CountUp start={10000} end={totalAmount} duration={2} />} đ
               </p>
             </div>
           </div>
-          <div className="h-full w-px bg-gray-300 mx-auto"></div>
-          <div className="flex items-center justify-right gap-5">
-            <i className="ri-list-ordered text-3xl bg-yellow-500 text-white py-1 px-2 rounded-full"></i>
+          <div className="h-full w-px bg-gray-300 mx-auto "></div>
+          <div className="flex items-center justify-center md:gap-5 gap-3  grid-cols-5 col-span-5">
+            <i className="ri-list-ordered md:text-3xl text-xl bg-yellow-500 text-white py-1 px-2 rounded-full"></i>
             <div>
-              <h2 className="font-medium">Đơn hàng mới</h2>
-              <p className="font-bold text-xl text-[#eab308]">
+              <h2 className="font-medium md:text-base text-sm">Đơn hàng mới</h2>
+              <p className="font-bold md:text-xl text-lg text-[#eab308]">
                 {<CountUp start={1000} end={totalOrders} duration={2} />}
               </p>
             </div>
@@ -74,7 +73,7 @@ const DashBoard = () => {
         </div>
       </section>
 
-      <section className="bg-white p-10 mb-10 flex flex-col justify-center">
+      <section className="bg-white md:p-10 p-1 mb-10 flex flex-col justify-center">
         <h2 className="text-center text-2xl font-bold mb-5">
           Biểu đồ doanh thu
         </h2>
@@ -105,7 +104,7 @@ const DashBoard = () => {
         </ResponsiveContainer>
       </section>
 
-      <section className="bg-white p-10">
+      <section className="bg-white md:p-10 p-1">
         <h2 className="text-center text-2xl font-bold mb-5">
           Biểu đồ đơn hàng
         </h2>
