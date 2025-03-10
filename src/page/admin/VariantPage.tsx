@@ -21,6 +21,7 @@ import {
   ID_DEFAULT_ATTRIBUTE,
 } from "../../components/constants/variable";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ClipLoader } from "react-spinners";
 
 type TAttribute = {
   _id: string;
@@ -41,8 +42,8 @@ const VariantPage = () => {
   const [isAdd, setIsAdd] = useState<boolean>(false);
   const [idDelete, setIdDelete] = useState<string>("");
 
-  const [loading, setLoading] = useState<boolean>(true)
-
+  const [loading, setLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const role = Cookies.get("role");
 
   const [inputValue, setInputValue] = useState<string>("");
@@ -68,7 +69,7 @@ const VariantPage = () => {
           toast.error("Bạn không có quyền vào trang này");
         } else {
           setAttribute(res.data.data);
-          setLoading(false)
+          setLoading(false);
         }
       } catch (error) {
         if (error instanceof AxiosError && error.response?.status === 400) {
@@ -160,13 +161,16 @@ const VariantPage = () => {
 
   const handleDelete = async (id: string) => {
     try {
+      setIsLoading(true);
       if (attributeValue.length === 1)
         return toast.error("Không thể xóa giá trị mặc định");
-      await instance.delete(`/attributes/${id}`);
+      await instance.delete(`/attribute_value/${id}`);
 
-      
+      setAttributeValue((prev) => prev.filter((item) => item._id !== id));
+      setIsLoading(false);
       toast.success("Xóa thành công");
     } catch (error: unknown) {
+      setIsLoading(false);
       if (error instanceof AxiosError && error.response?.status === 400) {
         toast.error(error.response.data?.error || "Có lỗi xảy ra!");
       }
@@ -200,18 +204,22 @@ const VariantPage = () => {
 
   const handleDeleteVariant = async (id: string) => {
     try {
+      setIsLoading(true);
       const res: AxiosResponse = await instance.delete(`/attributes/${id}`);
 
       if (res.status === 200) {
-        toast.success("Xóa thành công");
-
         setAttribute((prev) => {
+          console.log("check delete variants");
           return prev.filter((item) => item._id !== id);
-        }); 
+        });
+
+        setIsLoading(false);
+        toast.success("Xóa thành công");
       }
     } catch (error) {
+      setIsLoading(false);
       if (error instanceof AxiosError && error.response)
-        toast.error(error.response.data.error);
+        toast.error(error.response.data.message);
     }
   };
 
@@ -359,11 +367,32 @@ const VariantPage = () => {
               </AnimatePresence>
 
               {item._id !== ID_DEFAULT_ATTRIBUTE && (
-                <div
-                  className="absolute top-1/2 md:left-full -left-2 -translate-y-1/2 bg-red-400 text-white py-1 px-2 rounded-lg cursor-pointer"
-                  onClick={() => handleDeleteVariant(item._id)}
-                >
-                  <i className="ri-delete-bin-line"></i>
+                <div className="absolute top-1/2 md:left-full -left-2 -translate-y-1/2 bg-red-400 text-white py-1 px-2 rounded-lg cursor-pointer">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <i className="ri-delete-bin-line"></i>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Bạn có chắc muốn xóa biên thể không?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Với những sản phẩm có số lượng nhỏ hơn 0 sẽ bị xóa
+                          hoàn toàn. Bạn có chắc chắn muốn xóa
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleDeleteVariant(item._id)}
+                          className="bg-red-500 hover:bg-red-300"
+                        >
+                          <span>Xóa</span>
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               )}
             </section>
@@ -401,7 +430,13 @@ const VariantPage = () => {
           )}
         </motion.div>
       )}
-      <ToastContainer />
+
+      {isLoading && (
+        <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <ClipLoader color="#0089ff" size={50} />
+        </div>
+      )}
+      <ToastContainer autoClose={2000} />
     </>
   );
 };

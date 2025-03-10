@@ -90,7 +90,7 @@ const AddAndUpdateProduct = () => {
     resolver: zodResolver(id ? productSchemaUpdate : productSchema),
   });
   const nav = useNavigate();
-
+  console.log(errors);
   useEffect(() => {
     dispatch(fetchAttribute());
   }, [dispatch]);

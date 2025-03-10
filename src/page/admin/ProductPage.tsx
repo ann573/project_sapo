@@ -22,7 +22,7 @@ const ProductPage = () => {
   const role = Cookies.get("role");
 
   const [page, setPage] = useState<number>(1);
-  const limit = 10;
+  const limit = 5;
   const [total, setTotal] = useState<number>(0);
   const [topProduct, setTopProduct] = useState<
     {
@@ -126,7 +126,7 @@ const ProductPage = () => {
                         {variantIndex === 0 && (
                           <>
                             <td
-                              className="border border-slate-600 p-2 text-center"
+                              className="border border-slate-600 p-2 text-center "
                               rowSpan={item.variants.length}
                             >
                               {(page - 1) * limit + (index + 1)}
