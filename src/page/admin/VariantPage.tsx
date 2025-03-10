@@ -20,6 +20,7 @@ import {
   ID_DEFAULT,
   ID_DEFAULT_ATTRIBUTE,
 } from "../../components/constants/variable";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type TAttribute = {
   _id: string;
@@ -39,6 +40,9 @@ const VariantPage = () => {
   const [newName, setNewName] = useState<string>("");
   const [isAdd, setIsAdd] = useState<boolean>(false);
   const [idDelete, setIdDelete] = useState<string>("");
+
+  const [loading, setLoading] = useState<boolean>(true)
+
   const role = Cookies.get("role");
 
   const [inputValue, setInputValue] = useState<string>("");
@@ -64,6 +68,7 @@ const VariantPage = () => {
           toast.error("Bạn không có quyền vào trang này");
         } else {
           setAttribute(res.data.data);
+          setLoading(false)
         }
       } catch (error) {
         if (error instanceof AxiosError && error.response?.status === 400) {
@@ -157,12 +162,10 @@ const VariantPage = () => {
     try {
       if (attributeValue.length === 1)
         return toast.error("Không thể xóa giá trị mặc định");
-      await instance.delete(`/attribute_value/${id}`);
+      await instance.delete(`/attributes/${id}`);
 
+      
       toast.success("Xóa thành công");
-      setAttributeValue((prev) => {
-        return prev.filter((item) => item._id !== id);
-      });
     } catch (error: unknown) {
       if (error instanceof AxiosError && error.response?.status === 400) {
         toast.error(error.response.data?.error || "Có lỗi xảy ra!");
@@ -201,6 +204,10 @@ const VariantPage = () => {
 
       if (res.status === 200) {
         toast.success("Xóa thành công");
+
+        setAttribute((prev) => {
+          return prev.filter((item) => item._id !== id);
+        }); 
       }
     } catch (error) {
       if (error instanceof AxiosError && error.response)
@@ -208,18 +215,18 @@ const VariantPage = () => {
     }
   };
 
-  // if (true) {
-  //   return (
-  //     <>
-  //       <div className="py-10">
-  //         <Skeleton className="w-40 h-10 rounded-xl mb-10" />
-  //         <Skeleton className="w-full h-16 rounded-xl" />
-  //         <Skeleton className="w-full h-16 rounded-xl my-3" />
-  //         <Skeleton className="w-full h-16 rounded-xl" />
-  //       </div>
-  //     </>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <>
+        <div className="py-10">
+          <Skeleton className="w-40 h-10 rounded-xl mb-10" />
+          <Skeleton className="w-full h-16 rounded-xl" />
+          <Skeleton className="w-full h-16 rounded-xl my-3" />
+          <Skeleton className="w-full h-16 rounded-xl" />
+        </div>
+      </>
+    );
+  }
   return (
     <>
       {role !== "boss" ? (
