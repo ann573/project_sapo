@@ -223,7 +223,7 @@ const VariantPage = () => {
     }
   };
 
-  if (loading) {
+  if (loading && role === "boss") {
     return (
       <>
         <div className="py-10">

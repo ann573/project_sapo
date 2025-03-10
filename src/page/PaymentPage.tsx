@@ -38,6 +38,9 @@ const PaymentPage = () => {
   const numberArr = new Array(5).fill(0);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+  });
 
   useEffect(() => {
     if (idProduct) {
@@ -63,6 +66,20 @@ const PaymentPage = () => {
     }
   }, [idProduct, products]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup khi component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     let pay: number = total;
@@ -186,7 +203,7 @@ const PaymentPage = () => {
   };
 
   const onPayment = async () => {
-    setIsOpenMobile(false)
+    setIsOpenMobile(false);
     const value = setOther();
     if (value.includes("-")) {
       toast.error("Số tiền thanh toán đang âm");
@@ -251,9 +268,9 @@ const PaymentPage = () => {
         </div>
 
         {/* ==================== */}
-        {(isOpenMobile || window.innerWidth >= 768 ) && (
+        {(isOpenMobile || windowSize.width >= 768) && (
           <div
-            className={`xl:col-span-3 lg:col-span-4 md:col-span-5 col-span-12 py-2 px-3 md:w-full w-2/3 md:flex flex-col shadow-lg sm:shadow-none transition ease-in-out duration-300 md:static absolute bg-white z-[70] left-0 right-0 mx-auto rounded-lg`}
+            className={`xl:col-span-3 lg:col-span-4 md:col-span-5 col-span-12 py-2 px-3 md:w-full w-2/3 md:flex flex-col shadow-lg sm:shadow-none transition ease-in-out duration-300 md:static absolute bg-white z-[40] left-0 right-0 mx-auto rounded-lg`}
           >
             <PaymentDetail
               products={products}
@@ -284,9 +301,7 @@ const PaymentPage = () => {
 
       <div
         className={`fixed inset-0 bg-black transition-opacity duration-300 ease-in-out ${
-          isOpenMobile
-            ? "opacity-40 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
+          isOpenMobile ? "opacity-40" : "opacity-0 hidden "
         }`}
         onClick={() => setIsOpenMobile(false)}
       ></div>

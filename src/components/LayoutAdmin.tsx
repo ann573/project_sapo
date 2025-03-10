@@ -1,12 +1,31 @@
 import HeaderAdmin from "./HeaderAdmin";
 import { Outlet, NavLink } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../style/layoutadmin.css";
 
 const LayoutAdmin = () => {
   const [title, setTitle] = useState<string>("Tổng quát");
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+  });
+
+    useEffect(() => {
+      const handleResize = () => {
+        setWindowSize({
+          width: window.innerWidth,
+        });
+      };
+  
+      window.addEventListener("resize", handleResize);
+  
+      // Cleanup khi component unmount
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
+    }, []);
+  
   return (
     <>
       <HeaderAdmin title={title} />
@@ -25,7 +44,7 @@ const LayoutAdmin = () => {
         {/* Menu bar */}
         <div
           className={`lg:col-span-2 z-40 lg:h-vh h-full bg-[#1a2c3f] lg:static fixed top-0 left-0 transition-transform duration-300 ease-in-out ${
-            isOpen || window.innerWidth > 1024 ? "translate-x-0" : "-translate-x-full"
+            isOpen || windowSize.width > 1024 ? "translate-x-0" : "-translate-x-full"
           }`}
           style={{ minHeight: "calc(100vh - 66.74px)" ,zIndex: 999}}
         >

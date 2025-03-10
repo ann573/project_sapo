@@ -8,6 +8,7 @@ import { searchProduct } from "./../service/product";
 import useDebounce from "../hooks/useDebounce"; // Import hook useDebounce
 
 import imageCart from "../assets/pictures/cart.png";
+
 const HeaderPayment = ({
   setIdProduct,
 }: {
@@ -61,7 +62,7 @@ const HeaderPayment = ({
           />
           <i className="ri-search-line absolute left-1 xl:text-xl"></i>
           {isSearch && (
-            <div className="absolute top-full shadow-xl bg-white w-full max-h-[200px] overflow-y-auto">
+            <div className="absolute top-full shadow-xl bg-white z-30 w-full max-h-[200px] overflow-y-auto">
               {productSearch.length !== 0 ? (
                 productSearch.map((item, index) => {
                   return (
@@ -136,14 +137,17 @@ const HeaderPayment = ({
           </div>
         </section>
 
-          <section className="flex items-center md:hidden relative">
-        <i
-          className="ri-menu-line text-white font-semibold text-xl"
-          onClick={() => setIsOpen((prev) => !prev)}
-        ></i>
-        {isOpen && (
+        <section className="flex items-center md:hidden relative">
+          <i
+            className="ri-menu-line text-white font-semibold text-xl"
+            onClick={() => setIsOpen((prev) => !prev)}
+          ></i>
+          {isOpen && (
             <div className="bg-white absolute top-full -left-[200px] z-50 shadow-2xl w-[220px]">
-              <p className="border-b py-2 px-3">{nameUser}</p>
+              <p className="py-2 px-3 flex gap-3 items-center">
+                <i className="ri-user-line border rounded-full px-1"></i>
+                <span className="text-sm font-bold">{nameUser}</span>
+              </p>
               <p className="border-b py-2 px-3">
                 <Link to="/admin">Trang chủ</Link>
               </p>
@@ -157,8 +161,8 @@ const HeaderPayment = ({
 
               <i className="ri-triangle-fill absolute -top-[19px] left-full -translate-x-full text-white"></i>
             </div>
-        )}
-          </section>
+          )}
+        </section>
       </div>
     </header>
   );
