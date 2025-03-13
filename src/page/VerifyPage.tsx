@@ -28,7 +28,7 @@ const VerifyPage = () => {
   return (
     <>
     <ToastContainer/>
-    <div className="text-center text-xl font-bold mt-20">Đang xác thực email, vui lòng đợi...</div>
+    <div className="text-center text-xl font-bold pt-20 h-svh">Đang xác thực email, vui lòng đợi...</div>
     </>
   );
 };

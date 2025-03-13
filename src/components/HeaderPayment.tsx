@@ -8,12 +8,14 @@ import { searchProduct } from "./../service/product";
 import useDebounce from "../hooks/useDebounce"; // Import hook useDebounce
 
 import imageCart from "../assets/pictures/cart.png";
+import { useAuthStore } from './../../store/useAuthStore';
 
 const HeaderPayment = ({
   setIdProduct,
 }: {
   setIdProduct: (id: string) => void;
 }) => {
+  const {logout} = useAuthStore()
   const nav = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isSearch, setIsSearch] = useState<boolean>(false);
@@ -39,6 +41,7 @@ const HeaderPayment = ({
   }, [debouncedSearchQuery]);
 
   const logoutAccount = (): void => {
+    logout()
     nav("/login");
 
     Cookies.remove("user");

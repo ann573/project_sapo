@@ -11,6 +11,7 @@ import { loginAccount } from "./../service/user";
 import IErrorResponse from "../interface/IErrorResponse";
 import { IResponse } from "../interface/IResponse";
 import ModelForgotPass from "@/components/ModelForgotPass";
+import { useAuthStore } from "./../../store/useAuthStore";
 
 type Inputs = {
   email: string;
@@ -19,7 +20,7 @@ type Inputs = {
 
 const LoginPage = () => {
   const [show, setShow] = useState<boolean>(false);
-
+  const { login } = useAuthStore();
   const nav = useNavigate();
   const {
     register,
@@ -35,7 +36,9 @@ const LoginPage = () => {
       if (response.status === 200) {
         const res = response.data;
         if (res.success) {
+          login(res.data.user);
           nav("/");
+
           Cookies.set("user", res.data?.user.name);
           Cookies.set("role", res.data?.user.role);
           Cookies.set("accessToken", res.data.accessToken);

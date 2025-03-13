@@ -110,7 +110,7 @@ const EmployeePage = () => {
   return (
     <>
       {role !== "boss" ? (
-        <div className="text-center text-3xl font-bold">
+        <div className="text-center text-3xl font-bold h-full">
           Chỉ chủ cửa hàng mới xem được trang này
         </div>
       ) : (

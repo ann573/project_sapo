@@ -11,25 +11,25 @@ const LayoutAdmin = () => {
     width: window.innerWidth,
   });
 
-    useEffect(() => {
-      const handleResize = () => {
-        setWindowSize({
-          width: window.innerWidth,
-        });
-      };
-  
-      window.addEventListener("resize", handleResize);
-  
-      // Cleanup khi component unmount
-      return () => {
-        window.removeEventListener("resize", handleResize);
-      };
-    }, []);
-  
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup khi component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <>
       <HeaderAdmin title={title} />
-      <section className="grid grid-cols-12 max-w-[1600px] mx-auto relative">
+      <section className="grid grid-cols-12 max-w-[1600px] h-full mx-auto relative">
         {/* Overlay mờ dần */}
 
         <div
@@ -39,14 +39,16 @@ const LayoutAdmin = () => {
               : "opacity-0 pointer-events-none"
           } lg:hidden`}
           onClick={() => setIsOpen(false)}
-          style={{zIndex: 99}}
+          style={{ zIndex: 20 }}
         ></div>
         {/* Menu bar */}
         <div
           className={`lg:col-span-2 z-40 lg:h-vh h-full bg-[#1a2c3f] lg:static fixed top-0 left-0 transition-transform duration-300 ease-in-out ${
-            isOpen || windowSize.width > 1024 ? "translate-x-0" : "-translate-x-full"
+            isOpen || windowSize.width > 1024
+              ? "translate-x-0"
+              : "-translate-x-full"
           }`}
-          style={{ minHeight: "calc(100vh - 66.74px)" ,zIndex: 999}}
+          style={{ minHeight: "calc(100vh - 66.74px)", zIndex: 21 }}
         >
           <nav className="text-white w-full">
             <ul>
@@ -55,7 +57,10 @@ const LayoutAdmin = () => {
                   to="/admin"
                   end
                   className="w-full block text-center py-3"
-                  onClick={() => setTitle("Tổng quát")}
+                  onClick={() => {
+                    setIsOpen(false);
+                    setTitle("Tổng quát");
+                  }}
                 >
                   Trang chủ
                 </NavLink>
@@ -64,7 +69,10 @@ const LayoutAdmin = () => {
                 <NavLink
                   to="/admin/product"
                   className="w-full block text-center py-3"
-                  onClick={() => setTitle("Sản phẩm")}
+                  onClick={() => {
+                    setIsOpen(false);
+                    setTitle("Sản phẩm");
+                  }}
                 >
                   Sản phẩm
                 </NavLink>
@@ -73,7 +81,10 @@ const LayoutAdmin = () => {
                 <NavLink
                   to="/admin/orders"
                   className="w-full block text-center py-3"
-                  onClick={() => setTitle("Đơn hàng")}
+                  onClick={() => {
+                    setIsOpen(false);
+                    setTitle("Đơn hàng");
+                  }}
                 >
                   Đơn hàng
                 </NavLink>
@@ -82,7 +93,10 @@ const LayoutAdmin = () => {
                 <NavLink
                   to="/admin/customer"
                   className="w-full block text-center py-3"
-                  onClick={() => setTitle("Khách hàng")}
+                  onClick={() => {
+                    setIsOpen(false);
+                    setTitle("Khách hàng");
+                  }}
                 >
                   Khách hàng
                 </NavLink>
@@ -91,7 +105,10 @@ const LayoutAdmin = () => {
                 <NavLink
                   to="/admin/employee"
                   className="w-full block text-center py-3 px-5 xl:px-0"
-                  onClick={() => setTitle("Nhân viên")}
+                  onClick={() => {
+                    setIsOpen(false);
+                    setTitle("Nhân viên");
+                  }}
                 >
                   Quản lý nhân viên
                 </NavLink>
@@ -100,9 +117,24 @@ const LayoutAdmin = () => {
                 <NavLink
                   to="/admin/variants"
                   className="w-full block text-center py-3"
-                  onClick={() => setTitle("Biến thể sản phẩm")}
+                  onClick={() => {
+                    setIsOpen(false);
+                    setTitle("Biến thể sản phẩm");
+                  }}
                 >
                   Quản lý biến thể
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/admin/chat"
+                  className="w-full block text-center py-3"
+                  onClick={() => {
+                    setIsOpen(false);
+                    setTitle("Trò chuyện");
+                  }}
+                >
+                  Tin nhắn
                 </NavLink>
               </li>
               <hr />
@@ -122,7 +154,7 @@ const LayoutAdmin = () => {
 
         {/* Nút mở menu */}
         <button
-          className="bg-white shadow-2xl fixed px-3 py-2 rounded-full bottom-10 left-10 z-50 button lg:hidden"
+          className="bg-white shadow-2xl fixed px-3 py-2 rounded-full bottom-10 left-10 z-20 button lg:hidden"
           onClick={() => setIsOpen(!isOpen)}
         >
           <i className="ri-menu-line"></i>
