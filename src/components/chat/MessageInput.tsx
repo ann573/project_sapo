@@ -5,26 +5,26 @@ import { toast, ToastContainer } from "react-toastify";
 
 const MessageInput = () => {
   const [text, setText] = useState("");
-  const [imagePreview, setImagePreview] = useState(null);
-  const fileInputRef = useRef(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { sendMessage } = useChatStore();
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file.type.startsWith("image/")) {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file?.type.startsWith("image/")) {
       toast.error("Xin hãy chọn ảnh (png, jpg, webp, ...)");
       return;
     }
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      setImagePreview(reader.result);
+      setImagePreview(reader.result as string);
     };
     console.log(imagePreview);
     reader.readAsDataURL(file);
   };
 
-  const handleSendMessage = async (e) => {
+  const handleSendMessage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     if (!text.trim() && !imagePreview) return;
 
@@ -32,6 +32,9 @@ const MessageInput = () => {
       await sendMessage({
         text: text.trim(),
         image: imagePreview,
+        receiverId: "",
+        senderId: "",
+        _id: "",
       });
 
       setText("");
@@ -42,7 +45,7 @@ const MessageInput = () => {
     }
   };
 
-  const removeImage = (e) => {
+  const removeImage = () => {
     setImagePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
@@ -69,7 +72,10 @@ const MessageInput = () => {
           </div>
         )}
 
-        <form onSubmit={handleSendMessage} className="flex items-center gap-5">
+        <form
+          onSubmit={() => handleSendMessage}
+          className="flex items-center gap-5"
+        >
           <div className="flex-1 flex gap-5 items-center">
             <input
               type="text"
@@ -97,7 +103,7 @@ const MessageInput = () => {
           </div>
           <button
             type="submit"
-            className="btn btn-info btn-accent btn-circle text-black"
+            className="btn btn-info btn-circle text-black"
             disabled={!text.trim() && !imagePreview}
           >
             <Send size={22} />
