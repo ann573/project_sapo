@@ -3,7 +3,8 @@ import { toast } from "react-toastify";
 import { io, Socket } from "socket.io-client";
 import { create } from "zustand";
 
-const BASE_URL = "http://localhost:8888";
+// const BASE_URL = "http://localhost:8888";
+const BASE_URL = "https://nodejs-sapo.onrender.com";
 
 type State = {
   authUser: IUser | null;
