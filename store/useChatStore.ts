@@ -2,10 +2,26 @@ import { create } from "zustand";
 
 import { instance } from "./../src/service/index";
 import { useAuthStore } from "./useAuthStore";
+import IMessage from "./../src/interface/IMessage";
+import IUser from "@/interface/IUser";
 
-export const useChatStore = create((set, get) => ({
+type State = {
+  messages: IMessage[];
+  users: IUser[];
+  selectedUser: IUser | null;
+  isUsersLoading: boolean;
+  isMessageLoading: boolean;
+  getUsers: () => Promise<void>;
+  getMessages: (userId: string) => Promise<void>;
+  sendMessage: (messageData: IMessage) => Promise<void>;
+  subscribeToMessage: () => void;
+  unSubscribeFromMessage: () => void;
+  setSelectedUser: (selectedUser: IUser) => void;
+};
+
+export const useChatStore = create<State>((set, get) => ({
   messages: [],
-  user: [],
+  users: [],
   selectedUser: null,
   isUsersLoading: false,
   isMessageLoading: false,
@@ -14,6 +30,7 @@ export const useChatStore = create((set, get) => ({
     set({ isUsersLoading: true });
     try {
       const res = await instance.get("/messages/users");
+
       set({ users: res.data.data });
     } catch (error) {
       console.log(error);
@@ -36,12 +53,12 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
-  sendMessage: async (messageData) => {
+  sendMessage: async (messageData: IMessage) => {
     const { selectedUser, messages } = get();
 
     try {
       const res = await instance.post(
-        `/messages/send/${selectedUser._id}`,
+        `/messages/send/${selectedUser?._id}`,
         messageData
       );
       set({ messages: [...messages, res.data.data] });
@@ -56,7 +73,7 @@ export const useChatStore = create((set, get) => ({
 
     const socket = useAuthStore.getState().socket;
 
-    socket.on("newMessage", (newMessage) => {
+    socket?.on("newMessage", (newMessage) => {
       const isMessageSentFromSelectedUser =
         newMessage.senderId === selectedUser._id;
       if (!isMessageSentFromSelectedUser) return;
@@ -69,8 +86,8 @@ export const useChatStore = create((set, get) => ({
   unSubscribeFromMessage: () => {
     const socket = useAuthStore.getState().socket;
 
-    socket.off("newMessage");
+    socket?.off("newMessage");
   },
 
-  setSelectedUser: (selectedUser) => set({ selectedUser }),
+  setSelectedUser: (selectedUser: IUser) => set({ selectedUser }),
 }));
