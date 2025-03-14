@@ -24,7 +24,7 @@ const MessageInput = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleSendMessage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!text.trim() && !imagePreview) return;
 
@@ -35,6 +35,7 @@ const MessageInput = () => {
         receiverId: "",
         senderId: "",
         _id: "",
+        createdAt: "",
       });
 
       setText("");
@@ -72,10 +73,7 @@ const MessageInput = () => {
           </div>
         )}
 
-        <form
-          onSubmit={() => handleSendMessage}
-          className="flex items-center gap-5"
-        >
+        <form onSubmit={handleSendMessage} className="flex items-center gap-5">
           <div className="flex-1 flex gap-5 items-center">
             <input
               type="text"

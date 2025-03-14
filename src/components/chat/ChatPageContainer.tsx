@@ -1,17 +1,16 @@
-import React, { useRef, useState } from "react";
-import { useChatStore } from "./../../../store/useChatStore";
-import { useEffect } from "react";
-import ChatHeader from "./ChatHeader";
-import MessageInput from "./MessageInput";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useEffect, useRef, useState } from "react";
 import MessageSkeleton from "../skeleton/MessageSkeleton";
 import { useAuthStore } from "./../../../store/useAuthStore";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useChatStore } from "./../../../store/useChatStore";
+import ChatHeader from "./ChatHeader";
+import MessageInput from "./MessageInput";
 
 const ChatPageContainer = () => {
   const {
     messages,
     getMessages,
-    isMessagesLoading,
+    isMessageLoading,
     selectedUser,
     subscribeToMessage,
     unSubscribeFromMessage,
@@ -20,17 +19,15 @@ const ChatPageContainer = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!selectedUser) return;
+
     getMessages(selectedUser._id);
     subscribeToMessage();
-    return () => unSubscribeFromMessage();
-  }, [
-    getMessages,
-    selectedUser._id,
-    unSubscribeFromMessage,
-    subscribeToMessage,
-  ]);
 
-  const messageEndRef = useRef(null);
+    return () => unSubscribeFromMessage();
+  }, [getMessages, selectedUser, unSubscribeFromMessage, subscribeToMessage]);
+
+  const messageEndRef = useRef<HTMLDivElement | null>(null);
   const { authUser } = useAuthStore();
 
   useEffect(() => {
@@ -48,7 +45,7 @@ const ChatPageContainer = () => {
       hour12: false,
     });
   }
-  if (isMessagesLoading) return <MessageSkeleton />;
+  if (isMessageLoading) return <MessageSkeleton />;
   return (
     <>
       <div className="flex-1 flex flex-col overflow-auto">
@@ -59,7 +56,7 @@ const ChatPageContainer = () => {
               <div
                 key={message?._id}
                 className={`chat ${
-                  message.senderId === authUser._id ? "chat-end" : "chat-start"
+                  message.senderId === authUser?._id ? "chat-end" : "chat-start"
                 }`}
                 ref={messageEndRef}
               >

@@ -16,7 +16,7 @@ type State = {
   sendMessage: (messageData: IMessage) => Promise<void>;
   subscribeToMessage: () => void;
   unSubscribeFromMessage: () => void;
-  setSelectedUser: (selectedUser: IUser) => void;
+  setSelectedUser: (selectedUser: IUser | null) => void;
 };
 
 export const useChatStore = create<State>((set, get) => ({
@@ -89,5 +89,5 @@ export const useChatStore = create<State>((set, get) => ({
     socket?.off("newMessage");
   },
 
-  setSelectedUser: (selectedUser: IUser) => set({ selectedUser }),
+  setSelectedUser: (selectedUser: IUser | null) => set({ selectedUser }),
 }));
